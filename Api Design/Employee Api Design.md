@@ -5,7 +5,7 @@
 
 <img src="Employee.png" alt="Employee Entity" width="700" height="300">
 
-1. **Get Employees whose name starts with character** 
+1. **Get employees whose name starts with character** 
     - endpoint : /api/employees/?starts-with={char}
     - query-param-required : false
     - response-status : 200
