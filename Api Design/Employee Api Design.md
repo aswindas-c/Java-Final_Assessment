@@ -6,31 +6,32 @@
 <img src="Employee.png" alt="Employee Entity" width="700" height="300">
 
 1. **Get employees whose name starts with character** 
-    - endpoint : /api/employees/?starts-with={char}
+    - endpoint : /api/employee/?starts-with={char}
     - query-param-required : false
     - response-status : 200
     - method : GET
     - response : list of employee details as JSON
     ```json
    {
-      "employees" : [
-        {
-            "id" : 4,
-            "name" : "Sandra",
-            "designation" : "Associate",
-            "stream" : "sales",
-            "accountName" : "smart ops",
-            "managerId" : 1
-        },
-        {
-            "id" : 1,
-            "name" : "Sasi",
-            "designation" : "Manager",
-            "stream" : "sales",
-            "accountName" : "smart ops",
-            "managerId" : 0
-        }
-    ]
+      "employees" :
+        [
+            {
+                "id" : 4,
+                "name" : "Sandra",
+                "designation" : "Associate",
+                "stream" : "SmartOps-sales",
+                "accountName" : "SmartOps",
+                "managerId" : 1
+            },
+            {
+                "id" : 1,
+                "name" : "Sasi",
+                "designation" : "Manager",
+                "stream" : "SmartOps-sales",
+                "accountName" : "SmartOps",
+                "managerId" : 0
+            }
+        ]
    }
     ```
 2. **Get All Streams** 
@@ -40,7 +41,7 @@
     - response : streams as JSON
     ```json
     {
-         "streams" : ["sales","engineering","marketing"]
+         "streams" : ["SmartOps-sales","Walmart-QA","Walmart-Marketing"]
     }
     ```
 3. **Update Employee**
@@ -73,7 +74,7 @@
    ```json
    {
         "name" : "Aswin",
-        "stream" : "Sales",
+        "stream" : "SmartOps-sales",
         "designation" : "Manager",
         "managerId" : 0,
         "accountName" : "SmartOps"
