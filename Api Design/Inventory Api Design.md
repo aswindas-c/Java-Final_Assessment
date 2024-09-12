@@ -29,7 +29,7 @@
    - query-param-required : false
    - response-status : 200
    - method : GET
-   - response : message showing if the update is success or not
+   - response : List of products as JSON
    ```json
    {
         "products" : 
@@ -100,7 +100,7 @@
    - response : message 
    ```json
    {
-       "categories" : ["make-up","gadgets","accessories"]
+       "categories" : ["home appliances","gadgets","accessories"]
    }
    ```
 7. **Update Category**
