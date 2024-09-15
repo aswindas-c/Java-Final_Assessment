@@ -2,26 +2,17 @@ package com.Aspire.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "employeeManager")
+@Document(collection = "account")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeModel {
-    
+public class Account {
     @Id
-    private Integer id;
+    private String id;
 
     private String name;
-
-    private Integer managerId;
-    
-    private String stream;
-
-    private String accountName; 
-
 }
