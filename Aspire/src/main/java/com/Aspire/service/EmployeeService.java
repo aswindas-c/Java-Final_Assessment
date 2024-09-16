@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.EmployeeRepository;
+import com.Aspire.Respository.ManagerRepository;
 import com.Aspire.model.Employee;
+import com.Aspire.model.Manager;
 
 @Service
 public class EmployeeService {
@@ -18,12 +20,10 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepo;
 
+    @Autowired
+    private ManagerRepository managerRepo;
+
     public Response addEmployee(Employee employee) {
-
-
-        // String designation = employee.getDesignation();
-        // String stream = employee.getStream();
-        // String accountName = employee.getAccountName();
 
         Integer maxId = employeeRepo.findMaxId();
         if(maxId != null) {
@@ -50,7 +50,16 @@ public class EmployeeService {
                 throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
             }
 
+            //save to employee collection
             employeeRepo.insert(employee);
+
+            // Save the manager details to the Manager collection
+            Manager manager = new Manager();
+            manager.setId(employee.getId());
+            manager.setName(employee.getName());
+            manager.setStreamName(employee.getStream());
+            // Add the manager to the Manager collection
+            managerRepo.insert(manager);
             return new Response("Employee added as Manager successfully with ID: " + employee.getId());
         } else {
             // Handle non-Account Manager 
