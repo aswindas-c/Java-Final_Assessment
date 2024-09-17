@@ -134,4 +134,30 @@ public class EmployeeService {
             throw new IllegalArgumentException(String.join(", ", errors));
         }
     }
+
+    //Delete a employee
+    public Response deleteEmployee(Integer employeeId) {
+        // Check if the employee exists
+        Employee employee = employeeRepo.findById(employeeId);
+        if (employee == null) {
+            throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
+        }
+    
+        List<Employee> subordinates = employeeRepo.findByManagerId(employeeId);
+        if (!subordinates.isEmpty()) {
+            throw new IllegalStateException("Cannot delete Employee with ID " + employeeId + " as they are a manager with subordinates.");
+        }
+    
+        // Delete the employee\
+        if(employee.getManagerId() == 0)
+        {
+            Manager manager = managerRepo.findById(employee.getId());
+            Stream stream = streamRepo.findByName(employee.getStream());
+            managerRepo.delete(manager);
+            stream.setManagerId(0);
+            streamRepo.save(stream);
+        }
+        employeeRepo.delete(employee);
+        return new Response("Successfully deleted " + employee.getName() + " from the organization.");
+    }
 }

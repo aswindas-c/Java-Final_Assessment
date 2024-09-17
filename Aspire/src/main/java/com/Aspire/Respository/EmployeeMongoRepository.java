@@ -80,4 +80,22 @@ public class EmployeeMongoRepository implements EmployeeRepository{
         Query query = new Query(Criteria.where("id").is(id));
         return mongoTemplate.findOne(query, Employee.class);
     }
+
+    public List<Employee> findByManagerId(Integer managerId) {
+        // Create a new Query object
+        Query query = new Query();
+
+        // Define the criteria for the managerId
+        Criteria criteria = Criteria.where("managerId").is(managerId);
+
+        // Add the criteria to the query
+        query.addCriteria(criteria);
+
+        // Execute the query and return the results
+        return mongoTemplate.find(query, Employee.class);
+    }
+
+    public void delete(Employee employee) {
+        mongoTemplate.remove(employee);
+    }
 }

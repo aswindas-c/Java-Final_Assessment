@@ -2,6 +2,7 @@ package com.Aspire.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import com.Aspire.DTO.Response;
 import com.Aspire.model.Employee;
 import com.Aspire.service.EmployeeService;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -32,10 +34,10 @@ public class MainController {
     //     return employeeService.getEmployee(managerId, yearsOfExperience);
     // }
 
-    // @DeleteMapping("/deleteEmployee")
-    // public Response deleteEmployee(@RequestParam Integer employeeId) {
-    //     return employeeService.deleteEmployee(employeeId);
-    // }
+    @DeleteMapping("/deleteEmployee")
+    public Response deleteEmployee(@RequestParam Integer employeeId) {
+        return employeeService.deleteEmployee(employeeId);
+    }
 
     // @PutMapping("/changeEmployeeManager")
     // public Response changeEmployeeManager(
