@@ -1,5 +1,6 @@
 package com.Aspire.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.EmployeeRepository;
 import com.Aspire.Respository.ManagerRepository;
+import com.Aspire.Respository.StreamRepository;
 import com.Aspire.model.Employee;
 import com.Aspire.model.Manager;
+import com.Aspire.model.Stream;
 
 @Service
 public class EmployeeService {
@@ -23,7 +26,17 @@ public class EmployeeService {
     @Autowired
     private ManagerRepository managerRepo;
 
+    @Autowired
+    private StreamRepository streamRepo;
+
     public Response addEmployee(Employee employee) {
+
+        String stream = employee.getStream();
+        String designation = employee.getDesignation();
+        String accountName = employee.getAccountName();
+ 
+        // Validate employee data
+        validateEmployeeData(stream, designation, accountName);
 
         Integer maxId = employeeRepo.findMaxId();
         if(maxId != null) {
@@ -43,12 +56,16 @@ public class EmployeeService {
                 throw new IllegalArgumentException("Account Manager must have Manager ID set to 0. Employee cannot be added.");
             }
 
-            // Check if a manager already exists in the stream            
-            List<Employee> existingManagers = employeeRepo.findByStream(employee.getStream());
-
-            if (!existingManagers.isEmpty()) {
+            //Update Manager id to stream collection and also check manager already exist for the stream
+            Stream str = streamRepo.findByName(stream);
+            if(str.getManagerId() == 0){
+                str.setManagerId(employee.getId());
+                streamRepo.save(str);
+            }
+            else{
                 throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
             }
+
 
             //save to employee collection
             employeeRepo.insert(employee);
@@ -60,6 +77,7 @@ public class EmployeeService {
             manager.setStreamName(employee.getStream());
             // Add the manager to the Manager collection
             managerRepo.insert(manager);
+
             return new Response("Employee added as Manager successfully with ID: " + employee.getId());
         } else {
             // Handle non-Account Manager 
@@ -87,5 +105,26 @@ public class EmployeeService {
         employeeRepo.insert(employee);
 
         return new Response("Employee added successfully under Manager with ID: " + manager.getId());
+    }
+
+    public void validateEmployeeData(String stream, String designation, String accountName) {
+        List<String> errors = new ArrayList<>();
+        
+        if (!"Account Manager".equalsIgnoreCase(designation) && !"associate".equalsIgnoreCase(designation)) {
+            errors.add("Designation can only be Account Manager or associate.");
+        }
+     
+        Stream str = streamRepo.findByName(stream);
+        if (str == null) {
+            errors.add("Stream not found!!");
+        }
+
+        // if (str.getManagerId() != 0) {
+        //     throw new NoSuchElementException("Employee with ID " + employee.getManagerId() + " is not a manager. Employee cannot be added.");
+        // }
+    
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException(String.join(", ", errors));
+        }
     }
 }
