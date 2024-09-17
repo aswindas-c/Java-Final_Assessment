@@ -35,7 +35,7 @@
    }
     ```
 2. **Get All Streams** 
-    - endpoint : /api/streams
+    - endpoint : /api/employee/streams
     - response-status : 200
     - method : GET
     - response : streams as JSON
