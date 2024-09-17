@@ -9,14 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.Aspire.DTO.Response;
 import com.Aspire.model.Employee;
 import com.Aspire.service.EmployeeService;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 
 @RestController
+@RequestMapping("/api/employee")
+
 public class MainController {
     
     @Autowired
     private EmployeeService employeeService;
     
-    @PostMapping("/addEmployee")
+    @PostMapping("/add")
     public Response addEmployee(@Validated @RequestBody Employee employee) {
         return employeeService.addEmployee(employee);
     }
