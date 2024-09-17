@@ -13,4 +13,6 @@ public interface EmployeeRepository {
     Employee insert(Employee Employee);
     boolean existsById(Integer id);
     Employee findById(Integer id);
+    List<Employee> findByManagerId(Integer managerId);
+    void delete(Employee employee);
 }
