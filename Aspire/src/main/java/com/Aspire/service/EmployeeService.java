@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.Aspire.DTO.Response;
+import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
 import com.Aspire.Respository.ManagerRepository;
 import com.Aspire.Respository.StreamRepository;
+import com.Aspire.model.Account;
 import com.Aspire.model.Employee;
 import com.Aspire.model.Manager;
 import com.Aspire.model.Stream;
@@ -28,6 +30,9 @@ public class EmployeeService {
 
     @Autowired
     private StreamRepository streamRepo;
+
+    @Autowired
+    private AccountRepository accountRepo;
 
     public Response addEmployee(Employee employee) {
 
@@ -119,9 +124,11 @@ public class EmployeeService {
             errors.add("Stream not found!!");
         }
 
-        // if (str.getManagerId() != 0) {
-        //     throw new NoSuchElementException("Employee with ID " + employee.getManagerId() + " is not a manager. Employee cannot be added.");
-        // }
+        Account acnt = accountRepo.findByName(accountName);
+        System.out.println(acnt);
+        if (acnt == null) {
+            errors.add("Account not found!!");
+        }
     
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", errors));
