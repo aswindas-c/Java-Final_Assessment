@@ -2,7 +2,7 @@ package com.Aspire.Respository;
 
 
 import java.util.List;
-
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -97,5 +97,16 @@ public class EmployeeMongoRepository implements EmployeeRepository{
 
     public void delete(Employee employee) {
         mongoTemplate.remove(employee);
+    }
+
+    public List<Employee> findAll() {
+        return mongoTemplate.findAll(Employee.class);
+    }
+
+    @Override
+    public List<Employee> findByNameStartsWith(String startsWith) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").regex(Pattern.compile("^" + startsWith, Pattern.CASE_INSENSITIVE)));
+        return mongoTemplate.find(query, Employee.class);
     }
 }

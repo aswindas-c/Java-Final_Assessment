@@ -15,4 +15,6 @@ public interface EmployeeRepository {
     Employee findById(Integer id);
     List<Employee> findByManagerId(Integer managerId);
     void delete(Employee employee);
+    List<Employee> findAll();
+    List<Employee> findByNameStartsWith(String startsWith);
 }

@@ -134,7 +134,29 @@ public class EmployeeService {
             throw new IllegalArgumentException(String.join(", ", errors));
         }
     }
-
+    // Create the desired response
+    public List<Employee> getEmployee(String startsWith) {
+        if (startsWith == null || startsWith.isEmpty()) {
+            if(employeeRepo.findAll().isEmpty())
+            {
+                throw new NoSuchElementException("No Employee found.");
+            }
+            else
+            {
+                return employeeRepo.findAll();
+            }
+        } else 
+        {
+            if(employeeRepo.findByNameStartsWith(startsWith).isEmpty())
+            {
+                throw new NoSuchElementException("No Employee found.");
+            }
+            else
+            {
+                return employeeRepo.findByNameStartsWith(startsWith);
+            }
+        }
+    }
     //Delete a employee
     public Response deleteEmployee(Integer employeeId) {
         // Check if the employee exists
