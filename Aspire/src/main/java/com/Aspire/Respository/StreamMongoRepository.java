@@ -1,6 +1,8 @@
 package com.Aspire.Respository;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,5 +24,9 @@ public class StreamMongoRepository implements StreamRepository{
 
     public Stream save(Stream stream) {
         return mongoTemplate.save(stream);
+    }
+
+    public List<Stream> findAll() {
+        return mongoTemplate.findAll(Stream.class);
     }
 }
