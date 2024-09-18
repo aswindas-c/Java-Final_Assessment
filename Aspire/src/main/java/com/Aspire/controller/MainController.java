@@ -75,4 +75,13 @@ public class MainController {
         @RequestParam String stream) {
         return employeeService.changeDesignation(employeeId, stream);
     }
+
+    //Change Account of a employee
+    @PutMapping("/changeAccount")
+    public Response changeAccount(
+        @RequestParam Integer employeeId,
+        @RequestParam String account,
+        @RequestParam String stream) {
+        return employeeService.changeAccount(employeeId, account, stream);
+    }
 }
