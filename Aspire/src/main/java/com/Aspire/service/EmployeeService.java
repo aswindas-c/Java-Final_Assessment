@@ -249,4 +249,47 @@ public class EmployeeService {
                 employee.getName() + "'s manager has been successfully changed from " + originalManagerName + " to " + newManagerName + "."
         );
     }
+
+    //Change Employee Designation
+    public Response changeDesignation(Integer employeeId, String streamname) {
+        // Fetch the employee
+        Employee employee = employeeRepo.findById(employeeId);
+        //Check if employee with that id exist
+        if (employee == null) {
+            throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
+        }
+        Stream str = streamRepo.findByName(streamname);
+        Account acnt = accountRepo.findByName(employee.getAccountName());
+        //Check whether he is still a manager
+        if (employee.getManagerId() == 0) {
+            throw new IllegalStateException("Employee is already a manager");
+        }
+        //Check whether the stream exists
+        else if (str == null) {
+            throw new NoSuchElementException("Stream does not exist found!!");
+        }
+        //Check whether an manager exists in that stream
+        else if (str.getManagerId() != 0) {
+            throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
+        }
+        else{
+            if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
+            {
+                employee.setAccountName(acnt.getName());
+            }
+            employee.setStream(streamname);
+
+            //save to employee collection
+            employeeRepo.save(employee);
+            // Save the manager details to the Manager collection
+            Manager manager = new Manager();
+            manager.setId(employee.getId());
+            manager.setName(employee.getName());
+            manager.setStreamName(employee.getStream());
+            // Add the manager to the Manager collection
+            managerRepo.save(manager);
+            return new Response(
+                employee.getName() + " has been promoted to Manager");
+        }
+    }
 }

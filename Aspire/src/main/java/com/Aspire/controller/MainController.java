@@ -62,9 +62,17 @@ public class MainController {
 
     //Change a manager of a employee
     @PutMapping("/changeManager")
-    public Response changeEmployeeManager(
+    public Response changeManager(
         @RequestParam Integer employeeId,
         @RequestParam Integer managerId) {
         return employeeService.changeManager(employeeId, managerId);
+    }
+
+    //Change designation of a employee
+    @PutMapping("/changeDesignation")
+    public Response changeDesignation(
+        @RequestParam Integer employeeId,
+        @RequestParam String stream) {
+        return employeeService.changeDesignation(employeeId, stream);
     }
 }
