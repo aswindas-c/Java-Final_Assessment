@@ -295,4 +295,50 @@ public class EmployeeService {
                 employee.getName() + " has been promoted to Manager");
         }
     }
+
+    //Change Employee Account
+    public Response changeAccount(Integer employeeId, String account,String streamname) {
+        // Fetch the employee
+        Employee employee = employeeRepo.findById(employeeId);
+        Stream str = streamRepo.findByName(streamname);
+        Account acnt = accountRepo.findByName(account);
+        //Check if employee with that id exist
+        if (employee == null) {
+            throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
+        }
+        //Check whether the stream exists
+        else if (str == null) {
+            throw new NoSuchElementException("Stream does not exist!!");
+        }
+        //Check whether the account exists
+        else if (acnt == null) {
+            throw new NoSuchElementException("Account does not exist!!");
+        }
+        //Check Stream belong to that account
+        else if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+            throw new IllegalStateException("Stream does not belong to this account!!");
+        }
+        //Check whether he is in that account
+        else if (employee.getAccountName() == account) {
+            throw new IllegalStateException("Employee is already in the "+ account + " account");
+        }
+        //Check whether an manager exists in that stream
+        else if (str.getManagerId() == 0) {
+            throw new KeyAlreadyExistsException("No manager found for stream : " + employee.getStream());
+        }
+        else{
+            if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
+            {
+                employee.setAccountName(acnt.getName());
+            }
+            employee.setStream(streamname);
+            employee.setAccountName(account);
+            employee.setManagerId(str.getManagerId());
+
+            //save to employee collection
+            employeeRepo.save(employee);
+            return new Response(
+                employee.getName() + " account has been changed");
+        }
+    }
 }
