@@ -278,6 +278,7 @@ public class EmployeeService {
                 employee.setAccountName(acnt.getName());
             }
             employee.setStream(streamname);
+            employee.setDesignation("Account Manager");
 
             //save to employee collection
             employeeRepo.save(employee);
