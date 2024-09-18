@@ -66,8 +66,19 @@
      "message" : "Arun has been promoted to Manager"
    }
     ```
-
-5. **Delete Employee** 
+5. **Update Employee - Change Account**
+   - endpoint : /api/employee/changeAccount/?employeeId={emp-id}&stream={stream}&account={accountname}
+   - query-param-required : true
+   - response-status : 200
+   - method : PUT
+   - response : message 
+   ```json
+   {
+     "message" : "Arun account has been changed"
+   }
+    ```
+   
+6. **Delete Employee** 
     - endpoint : /api/employee/delete/?employeeId={emp-id}
     - query-param-required : true
     - response-status : 200
@@ -79,7 +90,7 @@
    }
    ```
 
-6. **Add an employee** 
+7. **Add an employee** 
     - endpoint : /api/employee/add
     - request-body :
    ```json
