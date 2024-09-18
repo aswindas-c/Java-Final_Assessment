@@ -103,7 +103,12 @@ public class EmployeeService {
 
         // Check if employee and manager are in the same stream
         if (!employee.getStream().equalsIgnoreCase(manager.getStream())) {
-            throw new IllegalArgumentException("Employee and manager must belong to the same department. Employee cannot be added.");
+            throw new IllegalArgumentException("Employee and manager must belong to the same stream. Employee cannot be added.");
+        }
+
+        // Check if employee and manager are in the same Account
+        if (!employee.getAccountName().equalsIgnoreCase(manager.getAccountName())) {
+            throw new IllegalArgumentException("Employee and manager must belong to the same account. Employee cannot be added.");
         }
 
         // Save the employee
@@ -119,22 +124,27 @@ public class EmployeeService {
             errors.add("Designation can only be Account Manager or associate.");
         }
      
+        //Check Stream exist in DB
         Stream str = streamRepo.findByName(stream);
         if (str == null) {
             errors.add("Stream not found!!");
         }
 
+        //Check account exist in DB
         Account acnt = accountRepo.findByName(accountName);
-        System.out.println(acnt);
         if (acnt == null) {
             errors.add("Account not found!!");
         }
     
+        //Check Stream belong to that account
+        if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+            errors.add("Stream does not belong to this account!!");
+        }
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", errors));
         }
     }
-    // Create the desired response
+    // Get employee starting with specific character
     public List<Employee> getEmployee(String startsWith) {
         if (startsWith == null || startsWith.isEmpty()) {
             if(employeeRepo.findAll().isEmpty())
@@ -157,6 +167,23 @@ public class EmployeeService {
             }
         }
     }
+
+    //Get all streams
+    public List<String> getStreams() {
+        List<Stream> streams = streamRepo.findAll();
+        if(streams.isEmpty())
+        {
+            throw new NoSuchElementException("No Streams found.");
+        }
+        else{
+            List<String> streamNames = new ArrayList<>();
+            for (Stream stream : streams) {
+                streamNames.add(stream.getName());
+            }
+            return streamNames;
+        }
+    }
+
     //Delete a employee
     public Response deleteEmployee(Integer employeeId) {
         // Check if the employee exists
@@ -181,5 +208,45 @@ public class EmployeeService {
         }
         employeeRepo.delete(employee);
         return new Response("Successfully deleted " + employee.getName() + " from the organization.");
+    }
+
+    //Change Employee Manager
+    public Response changeManager(Integer employeeId, Integer newManagerId) {
+        // Fetch the employee
+        Employee employee = employeeRepo.findById(employeeId);
+        if (employee == null) {
+            throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
+        }
+    
+        if (employee.getManagerId() == 0) {
+            throw new IllegalStateException("Employee is a manager cannot be changed");
+        }
+
+        if (employee.getManagerId().equals(newManagerId)) {
+            throw new IllegalStateException("Employee is currently under the given manager. No changes required.");
+        }
+    
+        // Fetch the new manager
+        Employee newManager = employeeRepo.findById(newManagerId);
+        if (newManager == null || newManager.getManagerId()!=0) {
+            throw new NoSuchElementException("New manager with ID " + newManagerId + " not found.");
+        }
+    
+        if (!employee.getStream().equalsIgnoreCase(newManager.getStream())) {
+            employee.setStream(newManager.getStream());
+            employee.setAccountName(newManager.getAccountName());
+        }
+    
+        // Build the response
+        String originalManagerName = employeeRepo.findById(employee.getManagerId()).getName();
+        String newManagerName = newManager.getName();
+
+        // Update the employee manager ID and updatedTime
+        employee.setManagerId(newManagerId);
+        employeeRepo.save(employee);
+    
+        return new Response(
+                employee.getName() + "'s manager has been successfully changed from " + originalManagerName + " to " + newManagerName + "."
+        );
     }
 }
