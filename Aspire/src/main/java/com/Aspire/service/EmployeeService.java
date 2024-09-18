@@ -288,6 +288,8 @@ public class EmployeeService {
             manager.setStreamName(employee.getStream());
             // Add the manager to the Manager collection
             managerRepo.save(manager);
+            str.setManagerId(employee.getId());
+                streamRepo.save(str);
             return new Response(
                 employee.getName() + " has been promoted to Manager");
         }
