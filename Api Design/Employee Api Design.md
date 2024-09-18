@@ -44,8 +44,8 @@
          "streams" : ["SmartOps-sales","Walmart-QA","Walmart-Marketing"]
     }
     ```
-3. **Update Employee**
-   - endpoint : /api/employee/update/?employeeId={emp-id}&managerId={mgr-id}
+3. **Update Employee - Change Manager**
+   - endpoint : /api/employee/changemanager/?employeeId={emp-id}&managerId={mgr-id}
    - query-param-required : true
    - response-status : 200
    - method : PUT
@@ -55,8 +55,19 @@
      "message" : "Arun’s Manager has been changed from Amal to Akhil"
    }
     ```
+4. **Update Employee - Change Designation**
+   - endpoint : /api/employee/changedesignation/?employeeId={emp-id}&stream={stream}
+   - query-param-required : true
+   - response-status : 200
+   - method : PUT
+   - response : message 
+   ```json
+   {
+     "message" : "Arun has been promoted to Manager"
+   }
+    ```
 
-4. **Delete Employee** 
+5. **Delete Employee** 
     - endpoint : /api/employee/delete/?employeeId={emp-id}
     - query-param-required : true
     - response-status : 200
@@ -68,7 +79,7 @@
    }
    ```
 
-5. **Add an employee** 
+6. **Add an employee** 
     - endpoint : /api/employee/add
     - request-body :
    ```json
