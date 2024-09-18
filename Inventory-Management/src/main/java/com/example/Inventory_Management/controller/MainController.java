@@ -12,29 +12,13 @@ import com.example.Inventory_Management.service.ProductService;
 @RestController
 @RequestMapping("/api")
 public class MainController {
+
     @Autowired
     private ProductService productService;
 
     @PostMapping("/addProduct")
     public Response addEmployee(@RequestBody Product product) {
-        return ProductService.addProduct(product);
+        return productService.addProduct(product);
     }
 
-    // @GetMapping("/getEmployee")
-    // public List<ManagerResponse> getEmployee(
-    //         @RequestParam(required = false) Integer managerId,
-    //         @RequestParam(required = false) Integer yearsOfExperience) {
-    //     return employeeService.getEmployee(managerId, yearsOfExperience);
-    // }
-
-    // @DeleteMapping("/deleteEmployee")
-    // public Response deleteEmployee(@RequestParam Integer employeeId) {
-    //     return employeeService.deleteEmployee(employeeId);
-    // }
-
-    // @PutMapping("/changeEmployeeManager")
-    // public Response changeEmployeeManager(
-    //         @RequestBody ChangeManagerRequest request) {
-    //     return employeeService.changeEmployeeManager(request.getEmployeeId(), request.getManagerId());
-    // }
 }
