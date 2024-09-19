@@ -13,5 +13,5 @@ public interface ProductRepo extends JpaRepository<Product,Integer> {
 
     Object findByName(String name);
 
-    
+    boolean existsById(Integer id);
 }
