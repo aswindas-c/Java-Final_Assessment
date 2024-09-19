@@ -7,6 +7,8 @@ import javax.management.openmbean.KeyAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.Inventory_Management.DTO.ProductDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
 import com.example.Inventory_Management.model.Product;
@@ -22,34 +24,18 @@ public class ProductService {
     @Autowired
     CategoryRepo categoryRepo;
 
-    public Response addProduct(Product product) {
+    public Response addProduct(ProductDto productDto) {
 
-        // Find the maximum id and increment for next id
-        Integer maxId = productRepo.findMaxId();
-        if(maxId != null) {
-            product.setId(maxId + 1);
-        } else {
-            product.setId(1);
-        }
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setCategory(categoryRepo.findById(productDto.getCategoryId())
+        .orElseThrow(() -> new RuntimeException("Category does not exist")));
+        product.setPrice(productDto.getPrice());
+        product.setQuantity(productDto.getQuantity());
         // Check if the product name already exists (it should be unique)
         if (productRepo.findByName(product.getName()) != null) {
             throw new KeyAlreadyExistsException("Product name already exists.");
         }
-        
-        // Check if product with the same ID already exists
-        if (productRepo.existsById(product.getId())) {
-            throw new KeyAlreadyExistsException("Product ID already exists.");
-        }
-        // Category category = categoryRepo.findById(product.getCategory().getId()).orElse(null);
-        // if (category == null) {
-        //     throw new NoSuchElementException("Error: Category does not exist.");
-        // }
-
-        // Check if the category id exist
-        if (!categoryRepo.existsById(product.getCategoryId())) {
-            throw new NoSuchElementException("Category does not exist.");
-        }
-
         productRepo.save(product);
         return new Response("Product added successfully with ID: " + product.getId());
     }
@@ -99,19 +85,6 @@ public class ProductService {
         // Check if the category name already exists (it should be unique)
         if (categoryRepo.findByName(category.getName()) != null) {
             throw new KeyAlreadyExistsException("Category name already exists.");
-        }
-
-        // Find the maximum ID of categories and assign next id to the new category
-        Integer maxId = categoryRepo.findMaxId();
-        if(maxId != null) {
-            category.setId(maxId + 1);
-        } else {
-            category.setId(1);
-        }
-        
-        // Check if category with the same ID already exists
-        if (categoryRepo.existsById(category.getId())) {
-            throw new KeyAlreadyExistsException("Category ID already exists.");
         }
         categoryRepo.save(category);
         return new Response("Category added successfully with ID: " + category.getId());
