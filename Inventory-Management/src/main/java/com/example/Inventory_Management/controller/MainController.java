@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.Inventory_Management.DTO.ProductDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
 import com.example.Inventory_Management.model.Product;
@@ -30,8 +32,8 @@ public class MainController {
 
     //Add a product
     @PostMapping("/products/add")
-    public Response addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    public Response addProduct(@RequestBody ProductDto productDto) {
+        return productService.addProduct(productDto);
     }
 
     //Get products based on product id or category id or both
