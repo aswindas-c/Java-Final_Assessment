@@ -7,6 +7,7 @@ import javax.management.openmbean.KeyAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.Inventory_Management.DTO.ProductDto;
 import com.example.Inventory_Management.DTO.Response;
@@ -26,6 +27,11 @@ public class ProductService {
 
     public Response addProduct(ProductDto productDto) {
 
+        //Stock levels cannot be negative.
+        if(productDto.getQuantity()<0){
+            throw new IllegalArgumentException("Stock levels cannot be negative.");
+        }
+
         Product product = new Product();
         product.setName(productDto.getName());
         product.setCategory(categoryRepo.findById(productDto.getCategoryId())
@@ -39,6 +45,86 @@ public class ProductService {
         productRepo.save(product);
         return new Response("Product added successfully with ID: " + product.getId());
     }
+
+    //updateProduct
+    @Transactional
+    public Response updateProduct(Integer productId, String name, Integer categoryId, Double price) {
+
+        Product product = productRepo.findUsingId(productId);
+        if(product == null){
+            throw new NoSuchElementException("Product with given id does not exist");
+        }
+        if(name != null && categoryId != null && price != null){
+            if (productRepo.findByName(product.getName()) != null) {
+                throw new KeyAlreadyExistsException("Product name already exists.");
+            }
+            if (!categoryRepo.existsById(categoryId)) {
+                throw new KeyAlreadyExistsException("Category name already exists.");
+            }
+            product.setName(name);
+            product.setCategory(categoryRepo.findUsingId(categoryId));
+            product.setPrice(price);
+            productRepo.save(product);
+            return new Response("successfully updated product's name,categoryId and price");
+        }
+
+        else if(name != null && categoryId != null){
+            if (productRepo.findByName(product.getName()) != null) {
+                throw new KeyAlreadyExistsException("Product name already exists.");
+            }
+            if (!categoryRepo.existsById(categoryId)) {
+                throw new KeyAlreadyExistsException("Category name already exists.");
+            }
+            product.setName(name);
+            product.setCategory(categoryRepo.findUsingId(categoryId));
+            productRepo.save(product);
+            return new Response("successfully updated product's name and categoryId");
+        }
+
+        else if(name != null && price != null){
+            if (productRepo.findByName(product.getName()) != null) {
+                throw new KeyAlreadyExistsException("Product name already exists.");
+            }
+            product.setName(name);
+            product.setPrice(price);
+            productRepo.save(product);
+            return new Response("successfully updated product's name and price");
+        }
+
+        else if(categoryId != null && price != null){
+            if (!categoryRepo.existsById(categoryId)) {
+                throw new KeyAlreadyExistsException("Category name already exists.");
+            }
+            product.setCategory(categoryRepo.findUsingId(categoryId));
+            product.setPrice(price);
+            productRepo.save(product);
+            return new Response("successfully updated product's category and price");
+        }
+
+        else if(name != null){
+            if (productRepo.findByName(product.getName()) != null) {
+                throw new KeyAlreadyExistsException("Product name already exists.");
+            }
+            product.setName(name);
+            productRepo.save(product);
+            return new Response("successfully updated product's name");
+        }
+
+        else if(categoryId != null){
+            if (!categoryRepo.existsById(categoryId)) {
+                throw new KeyAlreadyExistsException("Category name already exists.");
+            }
+            product.setCategory(categoryRepo.findUsingId(categoryId));
+            productRepo.save(product);
+            return new Response("successfully updated product's category");
+        }
+        else{
+            product.setPrice(price);
+            productRepo.save(product);
+            return new Response("successfully updated product's price");
+        }
+    }
+
     //Get products based on product id or category id or both
     public List<Product> getProduct(Integer productId, Integer categoryId) {
         List<Product> products;
@@ -61,7 +147,7 @@ public class ProductService {
         }
         else if(productId != null)
         {
-            products = productRepo.findUsingId(productId);
+            products = productRepo.findAllUsingId(productId);
             System.out.println(products);
             if(products.isEmpty())
             {
@@ -78,25 +164,30 @@ public class ProductService {
             return productRepo.findAll();
         }
     }
+    
+
+//CATEGORY
 
     //Delete a product
     public Response deleteProduct(Integer productId) {
-        List<Product> product = productRepo.findUsingId(productId);
-        if(product.isEmpty())
+        Product product = productRepo.findUsingId(productId);
+        if(product == null)
         {
             throw new NoSuchElementException("Product with id "+productId+"doesnt exist!!");
         }
         productRepo.delete(product);
+        return new Response("Successfully deleted product with id "+productId);
     }
 
     //add category
     public Response addCategory(Category category) {
 
-        // Check if the category name already exists (it should be unique)
+        //Check if the category name already exists (it should be unique)
         if (categoryRepo.findByName(category.getName()) != null) {
             throw new KeyAlreadyExistsException("Category name already exists.");
         }
         categoryRepo.save(category);
         return new Response("Category added successfully with ID: " + category.getId());
     }
+
 }
