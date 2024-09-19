@@ -168,6 +168,17 @@ public class ProductService {
 
 //CATEGORY
 
+    //Delete a product
+    public Response deleteProduct(Integer productId) {
+        Product product = productRepo.findUsingId(productId);
+        if(product == null)
+        {
+            throw new NoSuchElementException("Product with id "+productId+"doesnt exist!!");
+        }
+        productRepo.delete(product);
+        return new Response("Successfully deleted product with id "+productId);
+    }
+
     //add category
     public Response addCategory(Category category) {
 
