@@ -137,7 +137,7 @@ public class EmployeeService {
         }
     
         //Check Stream belong to that account
-        if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+        else if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
             errors.add("Stream does not belong to this account!!");
         }
         if (!errors.isEmpty()) {
