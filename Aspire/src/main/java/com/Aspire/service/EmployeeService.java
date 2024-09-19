@@ -73,7 +73,7 @@ public class EmployeeService {
 
 
             //save to employee collection
-            employeeRepo.insert(employee);
+            employeeRepo.save(employee);
 
             // Save the manager details to the Manager collection
             Manager manager = new Manager();
@@ -81,7 +81,7 @@ public class EmployeeService {
             manager.setName(employee.getName());
             manager.setStreamName(employee.getStream());
             // Add the manager to the Manager collection
-            managerRepo.insert(manager);
+            managerRepo.save(manager);
 
             return new Response("Employee added as Manager successfully with ID: " + employee.getId());
         } else {
@@ -92,7 +92,7 @@ public class EmployeeService {
         }
 
         // Handle normal employee
-        Employee manager = employeeRepo.findById(employee.getManagerId());
+        Employee manager = employeeRepo.findUsingId(employee.getManagerId());
         if (manager == null) {
             throw new NoSuchElementException("Manager with ID " + employee.getManagerId() + " not found. Employee cannot be added.");
         }
@@ -112,7 +112,7 @@ public class EmployeeService {
         }
 
         // Save the employee
-        employeeRepo.insert(employee);
+        employeeRepo.save(employee);
 
         return new Response("Employee added successfully under Manager with ID: " + manager.getId());
     }
@@ -135,10 +135,11 @@ public class EmployeeService {
         if (acnt == null) {
             errors.add("Account not found!!");
         }
-    
         //Check Stream belong to that account
-        if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
-            errors.add("Stream does not belong to this account!!");
+        if(acnt!=null && str!=null){
+            if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+                errors.add("Stream does not belong to this account!!");
+            }
         }
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", errors));
@@ -187,7 +188,7 @@ public class EmployeeService {
     //Delete a employee
     public Response deleteEmployee(Integer employeeId) {
         // Check if the employee exists
-        Employee employee = employeeRepo.findById(employeeId);
+        Employee employee = employeeRepo.findUsingId(employeeId);
         if (employee == null) {
             throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
         }
@@ -200,7 +201,7 @@ public class EmployeeService {
         // Delete the employee\
         if(employee.getManagerId() == 0)
         {
-            Manager manager = managerRepo.findById(employee.getId());
+            Manager manager = managerRepo.findUsingid(employee.getId());
             Stream stream = streamRepo.findByName(employee.getStream());
             managerRepo.delete(manager);
             stream.setManagerId(0);
@@ -213,7 +214,7 @@ public class EmployeeService {
     //Change Employee Manager
     public Response changeManager(Integer employeeId, Integer newManagerId) {
         // Fetch the employee
-        Employee employee = employeeRepo.findById(employeeId);
+        Employee employee = employeeRepo.findUsingId(employeeId);
         if (employee == null) {
             throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
         }
@@ -227,7 +228,7 @@ public class EmployeeService {
         }
     
         // Fetch the new manager
-        Employee newManager = employeeRepo.findById(newManagerId);
+        Employee newManager = employeeRepo.findUsingId(newManagerId);
         if (newManager == null || newManager.getManagerId()!=0) {
             throw new NoSuchElementException("New manager with ID " + newManagerId + " not found.");
         }
@@ -238,7 +239,7 @@ public class EmployeeService {
         }
     
         // Build the response
-        String originalManagerName = employeeRepo.findById(employee.getManagerId()).getName();
+        String originalManagerName = employeeRepo.findUsingId(employee.getManagerId()).getName();
         String newManagerName = newManager.getName();
 
         // Update the employee manager ID and updatedTime
@@ -253,7 +254,7 @@ public class EmployeeService {
     //Change Employee Designation
     public Response changeDesignation(Integer employeeId, String streamname) {
         // Fetch the employee
-        Employee employee = employeeRepo.findById(employeeId);
+        Employee employee = employeeRepo.findUsingId(employeeId);
         //Check if employee with that id exist
         if (employee == null) {
             throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
@@ -299,7 +300,8 @@ public class EmployeeService {
     //Change Employee Account
     public Response changeAccount(Integer employeeId, String account,String streamname) {
         // Fetch the employee
-        Employee employee = employeeRepo.findById(employeeId);
+        Employee employee = employeeRepo.findUsingId(employeeId);
+        System.out.println(employee);
         Stream str = streamRepo.findByName(streamname);
         Account acnt = accountRepo.findByName(account);
         //Check if employee with that id exist
@@ -319,12 +321,15 @@ public class EmployeeService {
             throw new IllegalStateException("Stream does not belong to this account!!");
         }
         //Check whether he is in that account
-        else if (employee.getAccountName() == account) {
+        else if (employee.getAccountName().equalsIgnoreCase(account)) {
             throw new IllegalStateException("Employee is already in the "+ account + " account");
         }
         //Check whether an manager exists in that stream
         else if (str.getManagerId() == 0) {
             throw new KeyAlreadyExistsException("No manager found for stream : " + employee.getStream());
+        }
+        else if(employee.getManagerId()==0){
+            throw new IllegalStateException("Cannot change account Employee is a manager");
         }
         else{
             if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))

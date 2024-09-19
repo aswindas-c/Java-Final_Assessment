@@ -1,11 +1,10 @@
 package com.Aspire.Respository;
 
-import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.Aspire.model.Stream;
 
-public interface StreamRepository {
+public interface StreamRepository extends JpaRepository<Stream,String>{
     Stream findByName(String name);
-    Stream save(Stream stream);
-    List<Stream> findAll();
 }

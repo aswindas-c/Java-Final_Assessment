@@ -1,12 +1,15 @@
 package com.Aspire.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "manager")
+@Entity
+@Table(name = "manager")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
