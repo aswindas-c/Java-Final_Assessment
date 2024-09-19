@@ -49,14 +49,12 @@ public class MainController {
         return response;
     }
 
-<<<<<<< HEAD
     //Delete a product
     @DeleteMapping("products/delete")
     public Response deleteProduct(@RequestParam Integer productId)
     {
         return productService.deleteProduct(productId);
     }
-=======
     @PutMapping("products/update")
     public Response updateProduct(
         @RequestParam Integer productId,
@@ -65,7 +63,6 @@ public class MainController {
         @RequestParam(required = false) Double price){
             return productService.updateProduct(productId,name,categoryId,price);
         }
->>>>>>> 24205fa10143a5c8badc7281f00429125ade0d58
 
     //Add a category
     @PostMapping("/categories/add")
