@@ -55,11 +55,11 @@ public class ProductService {
             throw new NoSuchElementException("Product with given id does not exist");
         }
         if(name != null && categoryId != null && price != null){
-            if (productRepo.findByName(product.getName()) != null) {
+            if (productRepo.findByName(name) != null) {
                 throw new KeyAlreadyExistsException("Product name already exists.");
             }
             if (!categoryRepo.existsById(categoryId)) {
-                throw new KeyAlreadyExistsException("Category name already exists.");
+                throw new KeyAlreadyExistsException("Category Id does not exists.");
             }
             product.setName(name);
             product.setCategory(categoryRepo.findUsingId(categoryId));
@@ -69,11 +69,11 @@ public class ProductService {
         }
 
         else if(name != null && categoryId != null){
-            if (productRepo.findByName(product.getName()) != null) {
+            if (productRepo.findByName(name) != null) {
                 throw new KeyAlreadyExistsException("Product name already exists.");
             }
             if (!categoryRepo.existsById(categoryId)) {
-                throw new KeyAlreadyExistsException("Category name already exists.");
+                throw new KeyAlreadyExistsException("Category Id does not exists.");
             }
             product.setName(name);
             product.setCategory(categoryRepo.findUsingId(categoryId));
@@ -82,7 +82,7 @@ public class ProductService {
         }
 
         else if(name != null && price != null){
-            if (productRepo.findByName(product.getName()) != null) {
+            if (productRepo.findByName(name) != null) {
                 throw new KeyAlreadyExistsException("Product name already exists.");
             }
             product.setName(name);
@@ -93,7 +93,7 @@ public class ProductService {
 
         else if(categoryId != null && price != null){
             if (!categoryRepo.existsById(categoryId)) {
-                throw new KeyAlreadyExistsException("Category name already exists.");
+                throw new KeyAlreadyExistsException("Category Id does not exists.");
             }
             product.setCategory(categoryRepo.findUsingId(categoryId));
             product.setPrice(price);
@@ -102,7 +102,7 @@ public class ProductService {
         }
 
         else if(name != null){
-            if (productRepo.findByName(product.getName()) != null) {
+            if (productRepo.findByName(name) != null) {
                 throw new KeyAlreadyExistsException("Product name already exists.");
             }
             product.setName(name);
@@ -112,16 +112,19 @@ public class ProductService {
 
         else if(categoryId != null){
             if (!categoryRepo.existsById(categoryId)) {
-                throw new KeyAlreadyExistsException("Category name already exists.");
+                throw new KeyAlreadyExistsException("Category Id does not exists.");
             }
             product.setCategory(categoryRepo.findUsingId(categoryId));
             productRepo.save(product);
             return new Response("successfully updated product's category");
         }
-        else{
+        else if(price != null){
             product.setPrice(price);
             productRepo.save(product);
             return new Response("successfully updated product's price");
+        }
+        else{
+            return new Response("Enter name,categoryId or price to be updated");
         }
     }
 
@@ -132,7 +135,7 @@ public class ProductService {
             products = productRepo.findByCategoryIdandId(productId,categoryId);
             if(products.isEmpty())
             {
-                throw new NoSuchElementException("No Employee exists under that category id and product id");
+                throw new NoSuchElementException("No Product exists under that category id and product id");
             }
             return products;
         } 
@@ -155,7 +158,7 @@ public class ProductService {
             }
             return products;
         }
-        else
+        else 
         {
             if(productRepo.findAll().isEmpty())
             {

@@ -39,7 +39,7 @@ public class MainController {
     }
 
     //Get products based on product id or category id or both
-    @GetMapping("products/get")
+    @GetMapping("/products/get")
     public Map<String, Object> getProduct(
         @RequestParam(required = false) Integer productId,
         @RequestParam(required = false) Integer categoryId) {
@@ -50,12 +50,12 @@ public class MainController {
     }
 
     //Delete a product
-    @DeleteMapping("products/delete")
+    @DeleteMapping("/products/delete")
     public Response deleteProduct(@RequestParam Integer productId)
     {
         return productService.deleteProduct(productId);
     }
-    @PutMapping("products/update")
+    @PutMapping("/products/update")
     public Response updateProduct(
         @RequestParam Integer productId,
         @RequestParam(required = false) String name,
