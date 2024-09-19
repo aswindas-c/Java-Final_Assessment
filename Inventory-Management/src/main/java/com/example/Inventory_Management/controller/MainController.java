@@ -16,6 +16,8 @@ import com.example.Inventory_Management.model.Category;
 import com.example.Inventory_Management.model.Product;
 import com.example.Inventory_Management.repository.CategoryRepo;
 import com.example.Inventory_Management.service.ProductService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -45,6 +47,13 @@ public class MainController {
         Map<String, Object> response = new HashMap<>();
         response.put("Products", products);
         return response;
+    }
+
+    //Delete a product
+    @DeleteMapping("products/delete")
+    public Response deleteProduct(@RequestParam Integer productId)
+    {
+        return productService.deleteProduct(productId);
     }
 
     //Add a category

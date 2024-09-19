@@ -79,6 +79,16 @@ public class ProductService {
         }
     }
 
+    //Delete a product
+    public Response deleteProduct(Integer productId) {
+        List<Product> product = productRepo.findUsingId(productId);
+        if(product.isEmpty())
+        {
+            throw new NoSuchElementException("Product with id "+productId+"doesnt exist!!");
+        }
+        productRepo.delete(product);
+    }
+
     //add category
     public Response addCategory(Category category) {
 
