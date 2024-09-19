@@ -14,5 +14,6 @@ public interface CategoryRepo extends JpaRepository<Category,Integer> {
 
     @Query("SELECT MAX(e.id) FROM Category e")
     Integer findMaxId();
-    
+
+    boolean existsById(Integer id);
 }

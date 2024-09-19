@@ -1,5 +1,9 @@
 package com.example.Inventory_Management.service;
 
+import java.util.NoSuchElementException;
+
+import javax.management.openmbean.KeyAlreadyExistsException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.Inventory_Management.DTO.Response;
@@ -19,23 +23,29 @@ public class ProductService {
 
     public Response addProduct(Product product) {
 
-        // Check if the product name already exists (it should be unique)
-        if (productRepo.findByName(product.getName()) != null) {
-            return new Response("Error: Product name already exists.");
-        }
-
-        // Check if the category id exist
-        if (!categoryRepo.existsById(product.getCategoryId())) {
-            return new Response("Error: Category does not exist.");
-        }
-
-        // Find the maximum ID of employees and assign next id to the new employee
+        // Find the maximum id and increment for next id
         Integer maxId = productRepo.findMaxId();
         if(maxId != null) {
             product.setId(maxId + 1);
         } else {
             product.setId(1);
         }
+        // Check if the product name already exists (it should be unique)
+        if (productRepo.findByName(product.getName()) != null) {
+            throw new KeyAlreadyExistsException("Product name already exists.");
+        }
+        
+        // Check if product with the same ID already exists
+        if (productRepo.existsById(product.getId())) {
+            throw new KeyAlreadyExistsException("Product ID already exists.");
+        }
+
+        // Check if the category id exist
+        if (!categoryRepo.existsById(product.getCategoryId())) {
+            throw new NoSuchElementException("Error: Category does not exist.");
+        }
+
+        
         
         productRepo.save(product);
         return new Response("Product added successfully with ID: " + product.getId());
@@ -60,6 +70,4 @@ public class ProductService {
         categoryRepo.save(category);
         return new Response("Category added successfully with ID: " + category.getId());
     }
-
-   
 }
