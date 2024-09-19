@@ -135,10 +135,11 @@ public class EmployeeService {
         if (acnt == null) {
             errors.add("Account not found!!");
         }
-    
         //Check Stream belong to that account
-        else if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
-            errors.add("Stream does not belong to this account!!");
+        if(acnt!=null && str!=null){
+            if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+                errors.add("Stream does not belong to this account!!");
+            }
         }
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", errors));
@@ -300,6 +301,7 @@ public class EmployeeService {
     public Response changeAccount(Integer employeeId, String account,String streamname) {
         // Fetch the employee
         Employee employee = employeeRepo.findUsingId(employeeId);
+        System.out.println(employee);
         Stream str = streamRepo.findByName(streamname);
         Account acnt = accountRepo.findByName(account);
         //Check if employee with that id exist
@@ -319,12 +321,15 @@ public class EmployeeService {
             throw new IllegalStateException("Stream does not belong to this account!!");
         }
         //Check whether he is in that account
-        else if (employee.getAccountName() == account) {
+        else if (employee.getAccountName().equalsIgnoreCase(account)) {
             throw new IllegalStateException("Employee is already in the "+ account + " account");
         }
         //Check whether an manager exists in that stream
         else if (str.getManagerId() == 0) {
             throw new KeyAlreadyExistsException("No manager found for stream : " + employee.getStream());
+        }
+        else if(employee.getManagerId()==0){
+            throw new IllegalStateException("Cannot change account Employee is a manager");
         }
         else{
             if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
