@@ -13,4 +13,7 @@ public interface CategoryRepo extends JpaRepository<Category,Integer> {
     Object findByName(String name);
 
     boolean existsById(Integer id);
+    
+    @Query("SELECT e FROM Category e WHERE e.id = :id")
+    Category findUsingId(Integer id);
 }

@@ -20,5 +20,8 @@ public interface ProductRepo extends JpaRepository<Product,Integer> {
     List<Product> findByCategoryIdandId(Integer productId, Integer categoryId);
 
     @Query("SELECT e FROM Product e WHERE e.id = :id")
-    List<Product> findUsingId(Integer id);
+    List<Product> findAllUsingId(Integer id);
+
+    @Query("SELECT e FROM Product e WHERE e.id = :id")
+    Product findUsingId(Integer id);
 }

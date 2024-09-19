@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.Inventory_Management.DTO.ProductDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
@@ -46,6 +46,15 @@ public class MainController {
         response.put("Products", products);
         return response;
     }
+
+    @PutMapping("products/update")
+    public Response updateProduct(
+        @RequestParam Integer productId,
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Integer categoryId,
+        @RequestParam(required = false) Double price){
+            return productService.updateProduct(productId,name,categoryId,price);
+        }
 
     //Add a category
     @PostMapping("/categories/add")
