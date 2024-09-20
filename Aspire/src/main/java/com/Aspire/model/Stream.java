@@ -18,9 +18,11 @@ import lombok.NoArgsConstructor;
 public class Stream {
     @Id
     private String id;
-    
+
+    private String accountId;
+
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "accountId", insertable=false, updatable=false)
     private Account account;
 
     private Integer managerId;
