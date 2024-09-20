@@ -88,13 +88,29 @@ public class MainController {
         @RequestParam Integer categoryId,
         @RequestParam String name){
         return productService.updateCategory(categoryId,name);
-        }
+    }
     
     //Delete a category
     @DeleteMapping("/categories/delete")
     public Response deleteCategory(@RequestParam Integer categoryId)
     {
         return productService.deleteCategory(categoryId);
+    }
+
+    //Sell a product
+    @PutMapping("/products/sell")
+    public Response sellProduct(
+        @RequestParam Integer productId,
+        @RequestParam Integer quantity){
+        return productService.sellProduct(productId,quantity);
+    }
+    
+    //Restock product
+    @PutMapping("/products/restock")
+    public Response restockProduct(
+        @RequestParam Integer productId,
+        @RequestParam Integer quantity){
+        return productService.restockProduct(productId,quantity);
     }
 
 }
