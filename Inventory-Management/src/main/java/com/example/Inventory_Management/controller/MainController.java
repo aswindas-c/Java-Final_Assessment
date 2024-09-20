@@ -55,6 +55,8 @@ public class MainController {
     {
         return productService.deleteProduct(productId);
     }
+
+    //Update products name,categoryId,price
     @PutMapping("/products/update")
     public Response updateProduct(
         @RequestParam Integer productId,
@@ -68,6 +70,16 @@ public class MainController {
     @PostMapping("/categories/add")
     public Response addCategory(@RequestBody Category category) {
         return productService.addCategory(category);
+    }
+
+    //Get all category  or details of a specific category
+    @GetMapping("/categories/get")
+    public Map<String, Object> getCategory(
+        @RequestParam(required = false) Integer categoryId){
+        List<Category> categories = productService.getCategory(categoryId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("Categories", categories);
+        return response;
     }
 
 }
