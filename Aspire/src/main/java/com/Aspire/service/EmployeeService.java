@@ -137,7 +137,7 @@ public class EmployeeService {
         }
         //Check Stream belong to that account
         if(acnt!=null && str!=null){
-            if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+            if (!str.getAccount().getId().equalsIgnoreCase(acnt.getId())) {
                 errors.add("Stream does not belong to this account!!");
             }
         }
@@ -274,7 +274,7 @@ public class EmployeeService {
             throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
         }
         else{
-            if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
+            if(!str.getAccount().getId().equalsIgnoreCase(acnt.getId()))
             {
                 employee.setAccountName(acnt.getName());
             }
@@ -317,7 +317,7 @@ public class EmployeeService {
             throw new NoSuchElementException("Account does not exist!!");
         }
         //Check Stream belong to that account
-        else if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
+        else if (!str.getAccount().getId().equalsIgnoreCase(acnt.getId())) {
             throw new IllegalStateException("Stream does not belong to this account!!");
         }
         //Check whether he is in that account
@@ -332,7 +332,7 @@ public class EmployeeService {
             throw new IllegalStateException("Cannot change account Employee is a manager");
         }
         else{
-            if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
+            if(!str.getAccount().getId().equalsIgnoreCase(acnt.getId()))
             {
                 employee.setAccountName(acnt.getName());
             }
