@@ -27,9 +27,12 @@ public class ProductService {
 
     public Response addProduct(ProductDto productDto) {
 
-        //Stock levels cannot be negative.
+        //Stock levels and price cannot be negative.
         if(productDto.getQuantity()<0){
             throw new IllegalArgumentException("Stock levels cannot be negative.");
+        }
+        if(productDto.getPrice()<0){
+            throw new IllegalArgumentException("Price cannot be negative.");
         }
 
         Product product = new Product();
@@ -167,11 +170,7 @@ public class ProductService {
             return productRepo.findAll();
         }
     }
-    
 
-//CATEGORY
-
-    //Delete a product
     public Response deleteProduct(Integer productId) {
         Product product = productRepo.findUsingId(productId);
         if(product == null)
@@ -181,6 +180,10 @@ public class ProductService {
         productRepo.delete(product);
         return new Response("Successfully deleted product with id "+productId);
     }
+    
+
+//CATEGORY
+
 
     //add category
     public Response addCategory(Category category) {
@@ -193,4 +196,24 @@ public class ProductService {
         return new Response("Category added successfully with ID: " + category.getId());
     }
 
+    //Get all category  or details of a specific category
+    public List<Category> getCategory(Integer categoryId) {
+        List<Category> categories;
+        if (categoryId != null) {
+            categories = categoryRepo.findAllUsingId(categoryId);
+            if(categories.isEmpty())
+            {
+                throw new NoSuchElementException("No category with that id found");
+            }
+            return categories;
+        } 
+        else 
+        {
+            if(categoryRepo.findAll().isEmpty())
+            {
+                throw new NoSuchElementException("No categories exist.");
+            }
+            return categoryRepo.findAll();
+        }
+    }
 }
