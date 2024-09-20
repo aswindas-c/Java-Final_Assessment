@@ -250,4 +250,41 @@ public class ProductService {
         categoryRepo.delete(category);
         return new Response("Successfully deleted cateogry with id " + categoryId);
     }
+
+    //Sell a product
+    public Response sellProduct(Integer productId, Integer quantity) {
+
+        Product product = productRepo.findUsingId(productId);
+        if(product == null){
+            throw new NoSuchElementException("Product with given id does not exist");
+        }
+        if(quantity<=0)
+        {
+            throw new IllegalArgumentException("Enter valid quantity");
+        }
+        if(product.getQuantity()<quantity)
+        {
+            throw new IllegalArgumentException("Required quantity not available.Available quantity = "+product.getQuantity());
+        }
+        product.setQuantity(product.getQuantity()-quantity);
+        productRepo.save(product);
+        return new Response(quantity+" products sold. Remaining quantity = "+product.getQuantity());
+    
+    }
+
+    //Restock a product
+    public Response restockProduct(Integer productId, Integer quantity) {
+
+        Product product = productRepo.findUsingId(productId);
+        if(product == null){
+            throw new NoSuchElementException("Product with given id does not exist");
+        }
+        if(quantity<=0)
+        {
+            throw new IllegalArgumentException("Enter valid quantity");
+        }
+        product.setQuantity(product.getQuantity()+quantity);
+        productRepo.save(product);
+        return new Response(quantity+" products restocked. Updated quantity = "+product.getQuantity());
+    }
 }
