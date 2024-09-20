@@ -82,4 +82,19 @@ public class MainController {
         return response;
     }
 
+    //Update category name
+    @PutMapping("/categories/update")
+    public Response updateCategory(
+        @RequestParam Integer categoryId,
+        @RequestParam String name){
+        return productService.updateCategory(categoryId,name);
+        }
+    
+    //Delete a category
+    @DeleteMapping("/categories/delete")
+    public Response deleteCategory(@RequestParam Integer categoryId)
+    {
+        return productService.deleteCategory(categoryId);
+    }
+
 }

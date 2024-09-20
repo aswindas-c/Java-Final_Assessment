@@ -216,4 +216,38 @@ public class ProductService {
             return categoryRepo.findAll();
         }
     }
+
+    //updateCategory
+    @Transactional
+    public Response updateCategory(Integer categoryId, String name) {
+
+        Category category = categoryRepo.findUsingId(categoryId);
+        if(category == null){
+            throw new NoSuchElementException("Cateogry with given id does not exist");
+        }
+
+        if (categoryRepo.findByName(name) != null) {
+            throw new KeyAlreadyExistsException("Category name already exists.");
+        }
+        category.setName(name);
+        categoryRepo.save(category);
+        return new Response("successfully updated category's name");
+    
+    }
+    //deleteProduct
+    public Response deleteCategory(Integer categoryId) {
+        Category category = categoryRepo.findUsingId(categoryId);
+        if(category == null)
+        {
+            throw new NoSuchElementException("category with id "+ categoryId+" doesnt exist!!");
+        }
+
+        List<Product> products = productRepo.findByCategoryId(categoryId); 
+        if(!products.isEmpty())
+        {
+            throw new IllegalStateException("Category cannot be deleted.There are products in that category");
+        }
+        categoryRepo.delete(category);
+        return new Response("Successfully deleted cateogry with id " + categoryId);
+    }
 }
