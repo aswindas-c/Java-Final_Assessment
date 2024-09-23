@@ -198,12 +198,10 @@ public class EmployeeService {
             throw new IllegalStateException("Cannot delete Employee with ID " + employeeId + " as they are a manager with subordinates.");
         }
    
-        // Delete the employee\
+        // Delete the employee
         if(employee.getManagerId() == 0)
         {
-            Manager manager = managerRepo.findUsingid(employee.getId());
             Stream stream = streamRepo.findByName(employee.getStream());
-            managerRepo.delete(manager);
             stream.setManagerId(0);
             streamRepo.save(stream);
         }
@@ -211,7 +209,7 @@ public class EmployeeService {
         return new Response("Successfully deleted " + employee.getName() + " from the organization.");
     }
  
-    //Change Employee Manager
+    //Change Employee's Manager
     public Response changeManager(Integer employeeId, Integer newManagerId) {
         // Fetch the employee
         Employee employee = employeeRepo.findUsingId(employeeId);
@@ -220,7 +218,7 @@ public class EmployeeService {
         }
    
         if (employee.getManagerId() == 0) {
-            throw new IllegalStateException("Employee is a manager cannot be changed");
+            throw new IllegalStateException("Employee is a manager, so cannot be changed");
         }
  
         if (employee.getManagerId().equals(newManagerId)) {
@@ -267,7 +265,7 @@ public class EmployeeService {
         }
         //Check whether the stream exists
         else if (str == null) {
-            throw new NoSuchElementException("Stream does not exist found!!");
+            throw new NoSuchElementException("Stream does not exist!!");
         }
         //Check whether an manager exists in that stream
         else if (str.getManagerId() != 0) {
@@ -276,7 +274,7 @@ public class EmployeeService {
         else{
             if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
             {
-                employee.setAccountName(acnt.getName());
+                employee.setAccountName(accountRepo.findUsingId(str.getAccountId()).getName());
             }
             employee.setStream(streamname);
             employee.setDesignation("Account Manager");
