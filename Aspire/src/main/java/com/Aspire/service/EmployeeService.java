@@ -3,20 +3,15 @@ package com.Aspire.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
- 
 import javax.management.openmbean.KeyAlreadyExistsException;
- 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
- 
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
-import com.Aspire.Respository.ManagerRepository;
 import com.Aspire.Respository.StreamRepository;
 import com.Aspire.model.Account;
 import com.Aspire.model.Employee;
-import com.Aspire.model.Manager;
 import com.Aspire.model.Stream;
  
 @Service
@@ -24,9 +19,6 @@ public class EmployeeService {
  
     @Autowired
     private EmployeeRepository employeeRepo;
- 
-    @Autowired
-    private ManagerRepository managerRepo;
  
     @Autowired
     private StreamRepository streamRepo;
@@ -75,14 +67,7 @@ public class EmployeeService {
             //save to employee collection
             employeeRepo.save(employee);
  
-            // Save the manager details to the Manager collection
-            Manager manager = new Manager();
-            manager.setId(employee.getId());
-            manager.setName(employee.getName());
-            manager.setStreamName(employee.getStream());
-            // Add the manager to the Manager collection
-            managerRepo.save(manager);
- 
+
             return new Response("Employee added as Manager successfully with ID: " + employee.getId());
         } else {
             // Handle non-Account Manager
@@ -281,26 +266,20 @@ public class EmployeeService {
  
             //save to employee collection
             employeeRepo.save(employee);
-            // Save the manager details to the Manager collection
-            Manager manager = new Manager();
-            manager.setId(employee.getId());
-            manager.setName(employee.getName());
-            manager.setStreamName(employee.getStream());
-            // Add the manager to the Manager collection
-            managerRepo.save(manager);
+            
+            //set manager id in stream
             str.setManagerId(employee.getId());
                 streamRepo.save(str);
             return new Response(
-                employee.getName() + " has been promoted to Manager");
+                employee.getName() + " has been promoted to Manager of "+employee.getStream());
         }
     }
  
     //Change Employee Account
-    public Response changeAccount(Integer employeeId, String account,String streamname) {
+    public Response changeAccount(Integer employeeId, String account,String streamName) {
         // Fetch the employee
         Employee employee = employeeRepo.findUsingId(employeeId);
-        System.out.println(employee);
-        Stream str = streamRepo.findByName(streamname);
+        Stream str = streamRepo.findByName(streamName);
         Account acnt = accountRepo.findByName(account);
         //Check if employee with that id exist
         if (employee == null) {
@@ -318,23 +297,20 @@ public class EmployeeService {
         else if (!str.getAccountId().equalsIgnoreCase(acnt.getId())) {
             throw new IllegalStateException("Stream does not belong to this account!!");
         }
-        //Check whether he is in that account
+        //Check whether employee is in that account
         else if (employee.getAccountName().equalsIgnoreCase(account)) {
             throw new IllegalStateException("Employee is already in the "+ account + " account");
         }
-        //Check whether an manager exists in that stream
+        //Check whether a manager exists in that stream
         else if (str.getManagerId() == 0) {
             throw new KeyAlreadyExistsException("No manager found for stream : " + employee.getStream());
         }
-        else if(employee.getManagerId()==0){
+        else if(employee.getManagerId() == 0){
             throw new IllegalStateException("Cannot change account Employee is a manager");
         }
         else{
-            if(!str.getAccountId().equalsIgnoreCase(acnt.getId()))
-            {
-                employee.setAccountName(acnt.getName());
-            }
-            employee.setStream(streamname);
+            employee.setAccountName(acnt.getName());
+            employee.setStream(streamName);
             employee.setAccountName(account);
             employee.setManagerId(str.getManagerId());
  
