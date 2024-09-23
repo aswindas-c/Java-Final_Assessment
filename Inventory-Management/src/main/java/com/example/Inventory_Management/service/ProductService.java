@@ -1,7 +1,9 @@
 package com.example.Inventory_Management.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 
@@ -25,6 +27,10 @@ public class ProductService {
     @Autowired
     CategoryRepo categoryRepo;
 
+
+    private Map<Integer, Product> productCache = new ConcurrentHashMap<>();    
+    private Map<Integer, Category> categoryCache = new ConcurrentHashMap<>();
+
     public Response addProduct(ProductDto productDto) {
 
         //Stock levels and price cannot be negative.
@@ -46,6 +52,7 @@ public class ProductService {
             throw new KeyAlreadyExistsException("Product name already exists.");
         }
         productRepo.save(product);
+        productCache.put(product.getId(), product);
         return new Response("Product added successfully with ID: " + product.getId());
     }
 
@@ -68,6 +75,7 @@ public class ProductService {
             product.setCategory(categoryRepo.findUsingId(categoryId));
             product.setPrice(price);
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's name,categoryId and price");
         }
 
@@ -81,6 +89,7 @@ public class ProductService {
             product.setName(name);
             product.setCategory(categoryRepo.findUsingId(categoryId));
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's name and categoryId");
         }
 
@@ -91,6 +100,7 @@ public class ProductService {
             product.setName(name);
             product.setPrice(price);
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's name and price");
         }
 
@@ -101,6 +111,7 @@ public class ProductService {
             product.setCategory(categoryRepo.findUsingId(categoryId));
             product.setPrice(price);
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's category and price");
         }
 
@@ -110,6 +121,7 @@ public class ProductService {
             }
             product.setName(name);
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's name");
         }
 
@@ -119,11 +131,13 @@ public class ProductService {
             }
             product.setCategory(categoryRepo.findUsingId(categoryId));
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's category");
         }
         else if(price != null){
             product.setPrice(price);
             productRepo.save(product);
+            productCache.put(productId, product);
             return new Response("successfully updated product's price");
         }
         else{
@@ -135,11 +149,17 @@ public class ProductService {
     public List<Product> getProduct(Integer productId, Integer categoryId) {
         List<Product> products;
         if (productId != null && categoryId != null) {
+            if(productCache.containsKey(productId)) 
+            {        
+                Product cachedProduct = productCache.get(productId);                
+                    return List.of(cachedProduct); 
+            }
             products = productRepo.findByCategoryIdandId(productId,categoryId);
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists under that category id and product id");
             }
+
             return products;
         } 
         else if(categoryId != null) 
@@ -153,8 +173,12 @@ public class ProductService {
         }
         else if(productId != null)
         {
+            if(productCache.containsKey(productId)) 
+            {        
+                Product cachedProduct = productCache.get(productId);                
+                    return List.of(cachedProduct); 
+            }
             products = productRepo.findAllUsingId(productId);
-            System.out.println(products);
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists with that product id.");
@@ -178,6 +202,7 @@ public class ProductService {
             throw new NoSuchElementException("Product with id "+productId+"doesnt exist!!");
         }
         productRepo.delete(product);
+        productCache.remove(productId);
         return new Response("Successfully deleted product with id "+productId);
     }
     
@@ -193,6 +218,7 @@ public class ProductService {
             throw new KeyAlreadyExistsException("Category name already exists.");
         }
         categoryRepo.save(category);
+        categoryCache.put(category.getId(), category);
         return new Response("Category added successfully with ID: " + category.getId());
     }
 
@@ -200,6 +226,11 @@ public class ProductService {
     public List<Category> getCategory(Integer categoryId) {
         List<Category> categories;
         if (categoryId != null) {
+            if(categoryCache.containsKey(categoryId)) 
+            {        
+                Category cachedCategory = categoryCache.get(categoryId);                
+                    return List.of(cachedCategory); 
+            }
             categories = categoryRepo.findAllUsingId(categoryId);
             if(categories.isEmpty())
             {
@@ -231,6 +262,7 @@ public class ProductService {
         }
         category.setName(name);
         categoryRepo.save(category);
+        categoryCache.put(category.getId(), category);
         return new Response("successfully updated category's name");
     
     }
@@ -248,6 +280,7 @@ public class ProductService {
             throw new IllegalStateException("Category cannot be deleted.There are products in that category");
         }
         categoryRepo.delete(category);
+        categoryCache.remove(categoryId);
         return new Response("Successfully deleted cateogry with id " + categoryId);
     }
 
@@ -268,6 +301,7 @@ public class ProductService {
         }
         product.setQuantity(product.getQuantity()-quantity);
         productRepo.save(product);
+        productCache.put(productId, product);
         return new Response(quantity+" products sold. Remaining quantity = "+product.getQuantity());
     
     }
@@ -285,6 +319,7 @@ public class ProductService {
         }
         product.setQuantity(product.getQuantity()+quantity);
         productRepo.save(product);
+        productCache.put(productId, product);
         return new Response(quantity+" products restocked. Updated quantity = "+product.getQuantity());
     }
 }
