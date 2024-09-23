@@ -48,9 +48,9 @@ public class EmployeeService {
         }
  
         // Handle special case for Account Manager
-        if ("Account Manager".equalsIgnoreCase(employee.getDesignation())) {
+        if ("Manager".equalsIgnoreCase(employee.getDesignation())) {
             if (employee.getManagerId() != 0) {
-                throw new IllegalArgumentException("Account Manager must have Manager ID set to 0. Employee cannot be added.");
+                throw new IllegalArgumentException("Manager must have Manager ID set to 0. Employee cannot be added.");
             }
  
             //Update Manager id to stream collection and also check manager already exist for the stream
@@ -72,7 +72,7 @@ public class EmployeeService {
         } else {
             // Handle non-Account Manager
             if (employee.getManagerId() == 0) {
-                throw new IllegalArgumentException("Manager ID 0 should have designation as Account Manager. Employee cannot be added.");
+                throw new IllegalArgumentException("Manager ID 0 should have designation as Manager. Employee cannot be added.");
             }
         }
  
@@ -105,8 +105,8 @@ public class EmployeeService {
     public void validateEmployeeData(String stream, String designation, String accountName) {
         List<String> errors = new ArrayList<>();
        
-        if (!"Account Manager".equalsIgnoreCase(designation) && !"associate".equalsIgnoreCase(designation)) {
-            errors.add("Designation can only be Account Manager or associate.");
+        if (!"Manager".equalsIgnoreCase(designation) && !"associate".equalsIgnoreCase(designation)) {
+            errors.add("Designation can only be Manager or associate.");
         }
      
         //Check Stream exist in DB
@@ -262,7 +262,7 @@ public class EmployeeService {
                 employee.setAccountName(accountRepo.findUsingId(str.getAccountId()).getName());
             }
             employee.setStream(streamname);
-            employee.setDesignation("Account Manager");
+            employee.setDesignation("Manager");
  
             //save to employee collection
             employeeRepo.save(employee);

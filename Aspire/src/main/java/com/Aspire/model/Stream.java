@@ -1,6 +1,7 @@
 package com.Aspire.model;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -27,6 +28,7 @@ public class Stream {
 
     private Integer managerId;
 
+    @Column(unique = true)
     private String name;
 
 }
