@@ -4,13 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.management.openmbean.KeyAlreadyExistsException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.Inventory_Management.DTO.ProductDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
@@ -18,7 +15,6 @@ import com.example.Inventory_Management.model.Product;
 import com.example.Inventory_Management.repository.CategoryRepo;
 import com.example.Inventory_Management.repository.ProductRepo;
 
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class ProductService {
@@ -29,27 +25,10 @@ public class ProductService {
     @Autowired
     CategoryRepo categoryRepo;
 
-    @PostConstruct
-    public void init() {
-        loadHashMap();
-    }
+    
 
     private Map<Integer, Product> productCache = new ConcurrentHashMap<>();    
     private Map<Integer, Category> categoryCache = new ConcurrentHashMap<>();
-
-    public void loadHashMap() {
-        Map<Integer, String> productIndex = new ConcurrentHashMap<>();
-        List<Object[]> productList = productRepo.findAllProducts();
-        for (Object[] p: productList) {
-            productIndex.put((Integer) p[0], (String) p[1]);
-        }
-   
-        Map<Integer,String> categoryIndex = new ConcurrentHashMap<>();
-        List<Category> categoryList = categoryRepo.findAll();
-        for(Category c : categoryList){
-            categoryIndex.put(c.getId(), c.getName());
-        }
-    }
 
     public Response addProduct(ProductDto productDto) {
 
