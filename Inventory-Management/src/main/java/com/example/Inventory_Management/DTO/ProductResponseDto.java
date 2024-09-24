@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 public class ProductResponseDto {
-    private Integer id; // Include product ID
-    private String name; // Include product name
-    private Integer quantity; // Include product quantity
-    private Double price; // Include product price
-    private Integer categoryId; // Include only category ID
+    private Integer id; 
+    private String name; 
+    private Integer quantity; 
+    private Double price; 
+    private Integer categoryId; 
 
     public ProductResponseDto(Product product) {
         this.id = product.getId();
