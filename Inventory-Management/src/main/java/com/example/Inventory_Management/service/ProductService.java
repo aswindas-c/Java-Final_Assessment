@@ -175,6 +175,7 @@ public class ProductService {
                     return List.of(cachedProduct); 
             }
             products = productRepo.findByCategoryIdandId(productId,categoryId);
+            productCache.put(productId, products.get(0));
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists under that category id and product id");
@@ -188,6 +189,10 @@ public class ProductService {
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists under that category id.");
+            }
+            for(Product product : products)
+            {
+                productCache.put(product.getId(), product);
             }
             return products;
         }
@@ -203,15 +208,17 @@ public class ProductService {
             {
                 throw new NoSuchElementException("No Product exists with that product id.");
             }
+            productCache.put(productId, products.get(0));
             return products;
         }
         else 
         {
-            if(productRepo.findAll().isEmpty())
+            products = productRepo.findAll();
+            if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Products found.");
             }
-            return productRepo.findAll();
+            return products;
         }
     }
 
@@ -256,15 +263,17 @@ public class ProductService {
             {
                 throw new NoSuchElementException("No category with that id found");
             }
+            categoryCache.put(categoryId, categories.get(0));
             return categories;
         } 
         else 
         {
-            if(categoryRepo.findAll().isEmpty())
+            categories = categoryRepo.findAll();
+            if(categories.isEmpty())
             {
                 throw new NoSuchElementException("No categories exist.");
             }
-            return categoryRepo.findAll();
+            return categories;
         }
     }
 
