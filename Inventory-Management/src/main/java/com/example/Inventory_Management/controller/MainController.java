@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.Inventory_Management.DTO.ProductDto;
+import com.example.Inventory_Management.DTO.ProductResponseDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
-import com.example.Inventory_Management.model.Product;
 import com.example.Inventory_Management.repository.CategoryRepo;
 import com.example.Inventory_Management.service.ProductService;
 
@@ -58,7 +58,7 @@ public class MainController {
         @RequestParam(required = false) Integer categoryId) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        List<Product> products = productService.getProduct(productId,categoryId);
+        List<ProductResponseDto> products = productService.getProduct(productId,categoryId);
         Map<String, Object> response = new HashMap<>();
         response.put("Products", products);
 
