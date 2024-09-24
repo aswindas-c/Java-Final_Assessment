@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import javax.management.openmbean.KeyAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.Inventory_Management.DTO.ProductDto;
+import com.example.Inventory_Management.DTO.ProductResponseDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
 import com.example.Inventory_Management.model.Product;
@@ -145,13 +148,13 @@ public class ProductService {
     }
 
     //Get products based on product id or category id or both
-    public List<Product> getProduct(Integer productId, Integer categoryId) {
+    public List<ProductResponseDto> getProduct(Integer productId, Integer categoryId) {
         List<Product> products;
         if (productId != null && categoryId != null) {
             if(productCache.containsKey(productId)) 
             {        
                 Product cachedProduct = productCache.get(productId);                
-                    return List.of(cachedProduct); 
+                    products = List.of(cachedProduct); 
             }
             products = productRepo.findByCategoryIdandId(productId,categoryId);
             productCache.put(productId, products.get(0));
@@ -160,7 +163,7 @@ public class ProductService {
                 throw new NoSuchElementException("No Product exists under that category id and product id");
             }
 
-            return products;
+            
         } 
         else if(categoryId != null) 
         {
@@ -173,14 +176,14 @@ public class ProductService {
             {
                 productCache.put(product.getId(), product);
             }
-            return products;
+            
         }
         else if(productId != null)
         {
             if(productCache.containsKey(productId)) 
             {        
                 Product cachedProduct = productCache.get(productId);                
-                    return List.of(cachedProduct); 
+                    products =  List.of(cachedProduct); 
             }
             products = productRepo.findAllUsingId(productId);
             if(products.isEmpty())
@@ -188,7 +191,7 @@ public class ProductService {
                 throw new NoSuchElementException("No Product exists with that product id.");
             }
             productCache.put(productId, products.get(0));
-            return products;
+            
         }
         else 
         {
@@ -197,8 +200,11 @@ public class ProductService {
             {
                 throw new NoSuchElementException("No Products found.");
             }
-            return products;
+            
         }
+
+        return products.stream().map(product -> new ProductResponseDto(product)).collect(Collectors.toList());
+        
     }
 
     public Response deleteProduct(Integer productId) {
