@@ -199,12 +199,9 @@ public class ProductService {
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Products found.");
-            }
-            
+            }     
         }
-
-        return products.stream().map(product -> new ProductResponseDto(product)).collect(Collectors.toList());
-        
+        return products.stream().map(product -> new ProductResponseDto(product)).collect(Collectors.toList());   
     }
 
     public Response deleteProduct(Integer productId) {
