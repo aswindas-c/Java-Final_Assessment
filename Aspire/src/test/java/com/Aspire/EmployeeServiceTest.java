@@ -758,4 +758,193 @@ public class EmployeeServiceTest {
         verify(streamRepo, times(1)).save(any(Stream.class));
     }
 
+    //Change Account - employee not found
+    @Test
+    void testChangeAccount_Employee_Not_Found() {
+
+        when(employeeRepo.findUsingId(3)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+        });
+
+        assertEquals("Employee with ID 3 not found.", exception.getMessage());
+    }
+
+    //Change Account - Stream not found
+    @Test
+    void testChangeAccount_Stream_Not_Found() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+        });
+
+        assertEquals("Stream does not exist!!", exception.getMessage());
+    }
+
+    //Change Account - Account not found
+    @Test
+    void testChangeAccount_Account_Not_Found() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+        });
+
+        assertEquals("Account does not exist!!", exception.getMessage());
+    }
+
+    
+    //Change Account - Stream does not belong to this account
+    @Test
+    void testChangeAccount_StreamAccount_Mismatch() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("SO");
+
+        Account account = new Account();
+        account.setName("Walmart");
+        account.setId("WL");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName("Walmart")).thenReturn(account);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.changeAccount(3,"Walmart","SmartOps-Sales");
+        });
+
+        assertEquals("Stream does not belong to this account!!", exception.getMessage());
+    }
+
+    //Change Account - Employee is already in the same account 
+    @Test
+    void testChangeAccount_Same_Account() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setAccountName("SmartOps");
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("SO");
+
+        Account account = new Account();
+        account.setName("SmartOps");
+        account.setId("SO");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName("SmartOps")).thenReturn(account);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+        });
+
+        assertEquals("Employee is already in the SmartOps account", exception.getMessage());
+    }
+
+    //Change Account - No manager for stream
+    @Test
+    void testChangeAccount_NoManager_Stream() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setAccountName("Walmart");
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("SO");
+        stream.setManagerId(0);
+
+        Account account = new Account();
+        account.setName("SmartOps");
+        account.setId("SO");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName("SmartOps")).thenReturn(account);
+
+        Exception exception = assertThrows(KeyAlreadyExistsException.class, () -> {
+            employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+        });
+
+        assertEquals("No manager found for stream : SmartOps-Sales", exception.getMessage());
+    }
+
+    //Change Account - Employee is a manager
+    @Test
+    void testChangeAccount_EmployeeManager() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setAccountName("Walmart");
+        employee.setManagerId(0);
+        employee.setId(3);
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("SO");
+        stream.setManagerId(5);
+
+        Account account = new Account();
+        account.setName("SmartOps");
+        account.setId("SO");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName("SmartOps")).thenReturn(account);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+        });
+
+        assertEquals("Cannot change account Employee is a manager", exception.getMessage());
+    }
+
+    //Change Account - Success
+    @Test
+    void testChangeAccount_Success() {
+
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setAccountName("Walmart");
+        employee.setManagerId(2);
+        employee.setId(3);
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("SO");
+        stream.setManagerId(5);
+
+        Account account = new Account();
+        account.setName("SmartOps");
+        account.setId("SO");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName("SmartOps")).thenReturn(account);
+
+        Response response = employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
+
+        assertEquals("Aswin account has been changed", response.getMessage());  // ID would be null unless mock behavior is adjusted.
+        verify(employeeRepo, times(1)).save(any(Employee.class));
+    }
 }
