@@ -298,7 +298,7 @@ public class EmployeeService {
         }
         //Check whether a manager exists in that stream
         else if (str.getManagerId() == 0) {
-            throw new KeyAlreadyExistsException("No manager found for stream : " + employee.getStream());
+            throw new KeyAlreadyExistsException("No manager found for stream : " + str.getName());
         }
         else if(employee.getManagerId() == 0){
             throw new IllegalStateException("Cannot change account Employee is a manager");
