@@ -631,4 +631,131 @@ public class EmployeeServiceTest {
         assertEquals("Arun's manager has been successfully changed from Aswin to Amal.", response.getMessage());  // ID would be null unless mock behavior is adjusted.
         verify(employeeRepo, times(1)).save(any(Employee.class));
     }
+
+    //Change Designation - employee not found
+    @Test
+    void testChangeDesignation_Employee_Not_Found() {
+
+        when(employeeRepo.findUsingId(3)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeDesignation(3,"SmartOps-Sa;es");
+        });
+
+        assertEquals("Employee with ID 3 not found.", exception.getMessage());
+    }
+
+    //Change Designation - employee is a manager
+    @Test
+    void testChangeDesignation_EmployeeManager() {
+
+        Employee employee = new Employee();
+        employee.setId(3);
+        employee.setAccountName("Walmart");
+        employee.setManagerId(0);
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("WL");
+
+        Account account = new Account();
+        account.setId("WL");
+        account.setName("Walmart");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.changeDesignation(3,"SmartOps-Sales");
+        });
+
+        assertEquals("Employee is already a manager", exception.getMessage());
+    }
+
+    //Change Designation - Manager alreasy exists in the stream
+    @Test
+    void testChangeDesignation_Manager_Exists() {
+
+        Employee employee = new Employee();
+        employee.setId(3);
+        employee.setAccountName("Walmart");
+        employee.setManagerId(4);
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("WL");
+        stream.setManagerId(5);
+
+        Account account = new Account();
+        account.setId("WL");
+        account.setName("Walmart");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
+
+        Exception exception = assertThrows(KeyAlreadyExistsException.class, () -> {
+            employeeService.changeDesignation(3,"SmartOps-Sales");
+        });
+
+        assertEquals("A manager already exists in the stream: null", exception.getMessage());
+    }
+
+    //Change Designation - stream not found
+    @Test
+    void testChangeDesignation_Stream_Not_Exist() {
+
+        Employee employee = new Employee();
+        employee.setId(3);
+        employee.setAccountName("Walmart");
+        employee.setManagerId(4);
+
+        Account account = new Account();
+        account.setId("WL");
+        account.setName("Walmart");
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(null);
+        when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeDesignation(3,"SmartOps-Sales");
+        });
+
+        assertEquals("Stream does not exist!!", exception.getMessage());
+    }
+
+    //Change Designation - Success
+    @Test
+    void testChangeDesignation_Success() {
+
+        Employee employee = new Employee();
+        employee.setId(3);
+        employee.setAccountName("Walmart");
+        employee.setManagerId(4);
+        employee.setDesignation("Associate");
+        employee.setName("Aswin");
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setAccountId("SO");
+        stream.setManagerId(0);
+
+        Account account = new Account();
+        account.setId("WL");
+        account.setName("Walmart");
+
+
+        when(employeeRepo.findUsingId(3)).thenReturn(employee);
+        when(streamRepo.findByName("SmartOps-Sales")).thenReturn(stream);
+        when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
+        when(accountRepo.findUsingId(stream.getAccountId())).thenReturn(account);
+
+        Response response = employeeService.changeDesignation(3,"SmartOps-Sales");
+
+        assertEquals("Aswin has been promoted to Manager of SmartOps-Sales", response.getMessage());  // ID would be null unless mock behavior is adjusted.
+        verify(employeeRepo, times(1)).save(any(Employee.class));
+        verify(streamRepo, times(1)).save(any(Stream.class));
+    }
+
 }
