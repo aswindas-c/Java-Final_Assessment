@@ -3,6 +3,8 @@ package com.Aspire;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
@@ -371,5 +373,92 @@ public class EmployeeServiceTest {
         });
 
         assertEquals("Employee and manager must belong to the same stream. Employee cannot be added.", exception.getMessage());
+    }
+
+    //Employee Starts with A
+    @Test
+    void testGetEmployee_GetEmployeesStartingWith() {
+        Employee employee1 = new Employee();
+        employee1.setName("Aswin");
+
+        List<Employee> employees = Arrays.asList(employee1);
+        when(employeeRepo.findByNameStartsWith("A")).thenReturn(employees);
+
+        List<Employee> result = employeeService.getEmployee("A");
+
+        assertEquals(employees, result);
+    }
+
+    //No Employee Starts with A
+    @Test
+    void testGetEmployee_No_EployeesStartingWith() {
+
+        List<Employee> employees = Arrays.asList();
+        when(employeeRepo.findByNameStartsWith("A")).thenReturn(employees);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.getEmployee("A");
+        });
+
+        assertEquals("No Employee found.", exception.getMessage());
+    }
+
+    //Get all Employee
+    @Test
+    void testGetEmployee_All_Employee() {
+        Employee employee1 = new Employee();
+        employee1.setName("Aswin");
+
+        Employee employee2 = new Employee();
+        employee2.setName("Riya");
+
+        List<Employee> employees = Arrays.asList(employee1,employee2);
+        when(employeeRepo.findAll()).thenReturn(employees);
+        List<Employee> result = employeeService.getEmployee(null);
+
+        assertEquals(employees, result);
+    }
+
+    //No Employee present
+    @Test
+    void testGetEmployee_No_Employee_Present() {
+
+        List<Employee> employees = Arrays.asList();
+        when(employeeRepo.findAll()).thenReturn(employees);
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.getEmployee(null);
+        });
+
+        assertEquals("No Employee found.", exception.getMessage());
+    }
+
+    //No Streams present
+    @Test
+    void testGetStreams_NO_Stream() {
+
+        List<Stream> streams = Arrays.asList();
+        when(streamRepo.findAll()).thenReturn(streams);
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.getStreams();
+        });
+
+        assertEquals("No Streams found.", exception.getMessage());
+    }
+
+    //Get all Stream
+    @Test
+    void testGetStream_All_Streams() {
+        Stream stream1 = new Stream();
+        stream1.setName("SmartOps-Sales");
+
+        Stream stream2 = new Stream();
+        stream2.setName("Walmart-Delivery");
+
+        List<String> streamNames = Arrays.asList(stream1.getName(),stream2.getName());
+        List<Stream> streams = Arrays.asList(stream1,stream2);
+        when(streamRepo.findAll()).thenReturn(streams);
+        List<String> result = employeeService.getStreams();
+
+        assertEquals(streamNames, result);
     }
 }
