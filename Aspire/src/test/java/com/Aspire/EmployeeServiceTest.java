@@ -461,4 +461,69 @@ public class EmployeeServiceTest {
 
         assertEquals(streamNames, result);
     }
+
+    //Delete employee not exist
+    @Test
+    void testDeleteEmployee_Not_Found() {
+
+        when(employeeRepo.findUsingId(3)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.deleteEmployee(3);
+        });
+
+        assertEquals("Employee with ID 3 not found.", exception.getMessage());
+    }
+
+    //Delete manager with subordinates
+    @Test
+    void testDeleteEmployee_Manager_With_Subordinates() {
+
+        Employee manager = new Employee();
+        manager.setName("Aswin");
+        manager.setId(3);
+
+        Employee employee1 = new Employee();
+        employee1.setName("Aswin");
+        employee1.setManagerId(3);
+
+        Employee employee2 = new Employee();
+        employee2.setName("Riya");
+        employee2.setManagerId(3);
+
+        List<Employee> subordinates = Arrays.asList(employee1,employee2);
+        when(employeeRepo.findUsingId(3)).thenReturn(manager);
+        when(employeeRepo.findByManagerId(3)).thenReturn(subordinates);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.deleteEmployee(3);
+        });
+
+        assertEquals("Cannot delete Employee with ID 3 as they are a manager with subordinates.", exception.getMessage());
+    }
+
+    //Delete manager with subordinates
+    @Test
+    void testDeleteEmployee_Success() {
+
+        Employee manager = new Employee();
+        manager.setName("Aswin");
+        manager.setId(3);
+        manager.setStream("SmartOps-Sales");
+        manager.setManagerId(0);
+
+        Stream stream = new Stream();
+        stream.setName("SmartOps-Sales");
+        stream.setManagerId(3);
+
+        List<Employee> subordinates = Arrays.asList();
+        when(employeeRepo.findUsingId(3)).thenReturn(manager);
+        when(employeeRepo.findByManagerId(3)).thenReturn(subordinates);
+        when(streamRepo.findByName(manager.getStream())).thenReturn(stream);
+
+        Response response = employeeService.deleteEmployee(3);
+
+        assertEquals("Successfully deleted Aswin from the organization.", response.getMessage());  // ID would be null unless mock behavior is adjusted.
+        verify(streamRepo, times(1)).save(any(Stream.class));
+    }
 }
