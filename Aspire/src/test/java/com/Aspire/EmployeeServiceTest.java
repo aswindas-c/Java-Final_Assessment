@@ -526,4 +526,109 @@ public class EmployeeServiceTest {
         assertEquals("Successfully deleted Aswin from the organization.", response.getMessage());  // ID would be null unless mock behavior is adjusted.
         verify(streamRepo, times(1)).save(any(Stream.class));
     }
+
+    //Change manager - employee not found
+    @Test
+    void testChangeManager_Employee_Not_Found() {
+
+        when(employeeRepo.findUsingId(3)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeManager(3,2);
+        });
+
+        assertEquals("Employee with ID 3 not found.", exception.getMessage());
+    }
+
+    //Change manager - employee is a manager
+    @Test
+    void testChangeManager_EmployeeManager() {
+
+        Employee manager = new Employee();
+        manager.setManagerId(0);
+        manager.setId(1);
+        when(employeeRepo.findUsingId(1)).thenReturn(manager);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.changeManager(1,2);
+        });
+
+        assertEquals("Employee is a manager, so cannot be changed", exception.getMessage());
+    }
+
+    //Change manager - Employee is currently under same manager
+    @Test
+    void testChangeManager_Same_Manager() {
+
+        Employee manager = new Employee();
+        manager.setManagerId(0);
+        manager.setId(1);
+
+        Employee employee = new Employee();
+        employee.setManagerId(1);
+        employee.setId(2);
+
+        when(employeeRepo.findUsingId(2)).thenReturn(employee);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            employeeService.changeManager(2,1);
+        });
+
+        assertEquals("Employee is currently under the given manager. No changes required.", exception.getMessage());
+    }
+
+    //Change manager - New Manager not found
+    @Test
+    void testChangeManager_Manager_Not_Exist() {
+
+        Employee manager = new Employee();
+        manager.setManagerId(0);
+        manager.setId(1);
+
+        Employee employee = new Employee();
+        employee.setManagerId(1);
+        employee.setId(2);
+
+        when(employeeRepo.findUsingId(2)).thenReturn(employee);
+        when(employeeRepo.findUsingId(3)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            employeeService.changeManager(2,3);
+        });
+
+        assertEquals("New manager with ID 3 not found.", exception.getMessage());
+    }
+
+    //Change manager - Success
+    @Test
+    void testChangeManager_Success() {
+
+        Employee manager = new Employee();
+        manager.setManagerId(0);
+        manager.setId(1);
+        manager.setManagerId(0);
+        manager.setName("Aswin");
+
+        Employee newManager = new Employee();
+        newManager.setId(3);
+        newManager.setStream("Walmart-Sales");
+        newManager.setManagerId(0);
+        newManager.setName("Amal");
+
+        Employee employee = new Employee();
+        employee.setManagerId(1);
+        employee.setId(2);
+        employee.setStream("SmartOps-Sales");
+        employee.setName("Arun");
+
+
+        when(employeeRepo.findUsingId(2)).thenReturn(employee);
+        when(employeeRepo.findUsingId(3)).thenReturn(newManager);
+        when(employeeRepo.findUsingId(1)).thenReturn(manager);
+
+        Response response = employeeService.changeManager(2,3);
+
+        assertEquals("Arun's manager has been successfully changed from Aswin to Amal.", response.getMessage());  // ID would be null unless mock behavior is adjusted.
+        verify(employeeRepo, times(1)).save(any(Employee.class));
+    }
 }
