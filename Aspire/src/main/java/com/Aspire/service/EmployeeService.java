@@ -91,11 +91,6 @@ public class EmployeeService {
             throw new IllegalArgumentException("Employee and manager must belong to the same stream. Employee cannot be added.");
         }
  
-        // Check if employee and manager are in the same Account
-        if (!employee.getAccountName().equalsIgnoreCase(manager.getAccountName())) {
-            throw new IllegalArgumentException("Employee and manager must belong to the same account. Employee cannot be added.");
-        }
- 
         // Save the employee
         employeeRepo.save(employee);
  
