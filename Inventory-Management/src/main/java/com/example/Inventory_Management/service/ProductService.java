@@ -73,6 +73,9 @@ public class ProductService {
             if (!categoryRepo.existsById(categoryId)) {
                 throw new KeyAlreadyExistsException("Category Id does not exists.");
             }
+            if(price<=0){
+                throw new IllegalArgumentException("Price must be positive.");
+            }
             product.setName(name);
             product.setCategory(categoryRepo.findUsingId(categoryId));
             product.setPrice(price);
@@ -99,6 +102,9 @@ public class ProductService {
             if (productRepo.findByName(name) != null) {
                 throw new KeyAlreadyExistsException("Product name already exists.");
             }
+            if(price<=0){
+                throw new IllegalArgumentException("Price must be positive.");
+            }
             product.setName(name);
             product.setPrice(price);
             productRepo.save(product);
@@ -109,6 +115,9 @@ public class ProductService {
         else if(categoryId != null && price != null){
             if (!categoryRepo.existsById(categoryId)) {
                 throw new KeyAlreadyExistsException("Category Id does not exists.");
+            }
+            if(price<=0){
+                throw new IllegalArgumentException("Price must be positive.");
             }
             product.setCategory(categoryRepo.findUsingId(categoryId));
             product.setPrice(price);
@@ -137,6 +146,9 @@ public class ProductService {
             return new Response("successfully updated product's category");
         }
         else if(price != null){
+            if(price<=0){
+                throw new IllegalArgumentException("Price must be positive.");
+            }
             product.setPrice(price);
             productRepo.save(product);
             productCache.put(productId, product);
@@ -157,12 +169,12 @@ public class ProductService {
                     products = List.of(cachedProduct); 
             }
             products = productRepo.findByCategoryIdandId(productId,categoryId);
-            productCache.put(productId, products.get(0));
+            
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists under that category id and product id");
             }
-
+            productCache.put(productId, products.get(0));
             
         } 
         else if(categoryId != null) 
