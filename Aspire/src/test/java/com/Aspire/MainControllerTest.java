@@ -17,6 +17,8 @@ import com.Aspire.controller.MainController;
 import com.Aspire.model.Employee;
 import com.Aspire.model.Stream;
 import com.Aspire.service.EmployeeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.hamcrest.Matchers.equalTo;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +38,27 @@ class MainControllerTest {
 
     @MockBean
     EmployeeService employeeService;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    //Add a Employee
+    @Test
+    void testAdd_Product() {
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setId(1);
+        when(employeeService.addEmployee(employee)).thenReturn(new Response("Employee added successfully"));
+        try {
+            mvc.perform(MockMvcRequestBuilders.post("/api/employee/add")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(employee)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message", equalTo("Employee added successfully")));
+            
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 
     //Get employee starting with
     @Test
