@@ -169,12 +169,12 @@ public class ProductService {
                     products = List.of(cachedProduct); 
             }
             products = productRepo.findByCategoryIdandId(productId,categoryId);
-            productCache.put(productId, products.get(0));
+            
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists under that category id and product id");
             }
-
+            productCache.put(productId, products.get(0));
             
         } 
         else if(categoryId != null) 
