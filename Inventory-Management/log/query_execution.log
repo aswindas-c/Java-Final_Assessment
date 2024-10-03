@@ -31,3 +31,13 @@ After Hash Map
 2024-09-23 17:43:33 [http-nio-8080-exec-1] INFO  MainController:66 - Get-Product Query executed in 168ms
 2024-09-24 14:11:28 [http-nio-8080-exec-1] INFO  MainController:66 - Get-Product Query executed in 125ms
 2024-09-24 14:11:38 [http-nio-8080-exec-3] INFO  MainController:66 - Get-Product Query executed in 32ms
+2024-10-01 11:33:44 [main] INFO  MainController:174 - Restock-Product Query executed in 4ms
+2024-10-01 11:34:17 [main] INFO  MainController:174 - Restock-Product Query executed in 3ms
+2024-10-01 11:39:30 [main] INFO  MainController:161 - Sell-Product Query executed in 3ms
+2024-10-01 11:43:05 [main] INFO  MainController:148 - Delete-Category Query executed in 2ms
+2024-10-01 12:04:42 [main] INFO  MainController:148 - Delete-Category Query executed in 0ms
+2024-10-01 12:07:24 [main] INFO  MainController:136 - Update-Category Query executed in 2ms
+2024-10-03 09:22:39 [main] INFO  MainController:148 - Delete-Category Query executed in 3ms
+2024-10-03 09:22:39 [main] INFO  MainController:174 - Restock-Product Query executed in 0ms
+2024-10-03 09:22:39 [main] INFO  MainController:161 - Sell-Product Query executed in 0ms
+2024-10-03 09:22:40 [main] INFO  MainController:136 - Update-Category Query executed in 0ms
