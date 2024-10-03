@@ -2,8 +2,9 @@ package com.example.Inventory_Management.DTO;
 
 import com.example.Inventory_Management.model.Product;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
+@AllArgsConstructor
 @Data
 public class ProductResponseDto {
     private Integer id; 
