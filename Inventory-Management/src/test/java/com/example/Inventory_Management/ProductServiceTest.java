@@ -709,6 +709,8 @@ class ProductServiceTest {
         existingProduct.setName("ExistingProduct");
         existingProduct.setCategory(new Category(categoryId, "ExistingCategory"));
 
+        when(productCache.containsKey(productId)).thenReturn(true);
+        when (productCache.get(productId)).thenReturn(existingProduct);
         when(productRepo.findByCategoryIdandId(productId, categoryId)).thenReturn(List.of(existingProduct));
 
         List<ProductResponseDto> result = productService.getProduct(productId, categoryId);

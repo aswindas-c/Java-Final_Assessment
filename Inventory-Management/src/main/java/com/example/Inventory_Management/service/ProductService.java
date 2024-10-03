@@ -168,7 +168,10 @@ public class ProductService {
                 Product cachedProduct = productCache.get(productId);                
                     products = List.of(cachedProduct); 
             }
-            products = productRepo.findByCategoryIdandId(productId,categoryId);
+            else{
+                products = productRepo.findByCategoryIdandId(productId,categoryId);
+            }
+            
             
             if(products.isEmpty())
             {
