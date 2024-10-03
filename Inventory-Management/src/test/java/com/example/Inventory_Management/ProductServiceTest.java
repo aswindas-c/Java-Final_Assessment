@@ -646,6 +646,22 @@ class ProductServiceTest {
         assertEquals("Category Id does not exists.", exception.getMessage());
     }
 
+    //update product - failure - nothing given to update
+    @Test
+    void testUpdateProduct_Failure_NO_UpdateData() {
+        Integer productId = 1;
+
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setName("OldProduct");
+        existingProduct.setCategory(new Category(1, "OldCategory"));
+
+        when(productRepo.findUsingId(productId)).thenReturn(existingProduct);
+        Response response = productService.updateProduct(productId, null, null, null);
+
+        assertEquals("Enter name,categoryId or price to be updated", response.getMessage());
+    }
+
     
     //Test for getProduct method
 
@@ -752,6 +768,34 @@ class ProductServiceTest {
         assertEquals("No Products found.", exception.getMessage());
     }
 
+    //delete product
+
+    @Test
+    void testDeleteProduct_ExistingProduct() {
+
+        Integer productId = 1;
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setName("Mobile");
+
+        when(productRepo.findUsingId(productId)).thenReturn(existingProduct);
+
+        Response result = productService.deleteProduct(productId);
+        assertEquals("Successfully deleted product with id " + productId, result.getMessage());
+    }
+
+    @Test
+    void testDeleteProduct_ProductDoesNotExist() {
+        Integer productId = 1;
+
+        when(productRepo.findUsingId(productId)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.deleteProduct(productId);
+        });
+        assertEquals("Product with id " + productId + "doesnt exist!!", exception.getMessage());
+    }
+
 //CATEGORY
 
     //add category
@@ -779,6 +823,8 @@ class ProductServiceTest {
         });
         assertEquals("Category name already exists.", exception.getMessage());
     }
+
+    
 
     //Test for get category
 
@@ -998,4 +1044,55 @@ class ProductServiceTest {
         assertEquals("Required quantity not available.Available quantity = " + existingProduct.getQuantity(),exception.getMessage());
     }
 
+     //Restock products - success
+    @Test
+    void testRestockProduct_Success() {
+        Integer productId = 1;
+        Integer quantity = 200;
+
+        Product existingProduct = new Product();
+        existingProduct.setId(1);
+        existingProduct.setQuantity(100);
+        existingProduct.setName("Mobile");
+
+        when(productRepo.findUsingId(1)).thenReturn(existingProduct);
+
+        Response response = productService.restockProduct(productId, quantity);
+
+        assertEquals("200 products restocked. Updated quantity = 300", response.getMessage());
+        verify(productRepo, times(1)).save(existingProduct);
+        verify(productCache, times(1)).put(productId, existingProduct);
+    }
+
+    //Restock - product not found
+    @Test
+    void testRestockProduct_ProductDoesNotExist() {
+        Integer productId = 1;
+
+        when(productRepo.findUsingId(productId)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.restockProduct(productId,100);
+        });
+        assertEquals("Product with given id does not exist", exception.getMessage());
+    }
+
+     //Restock products - invalid quantity
+     @Test
+     void testRestockProduct_InvalidQuantity() {
+         Integer productId = 1;
+         Integer quantity = -200;
+ 
+         Product existingProduct = new Product();
+         existingProduct.setId(1);
+         existingProduct.setQuantity(100);
+         existingProduct.setName("Mobile");
+ 
+         when(productRepo.findUsingId(1)).thenReturn(existingProduct);
+ 
+         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            productService.restockProduct(productId,quantity);
+        });
+        assertEquals("Enter valid quantity", exception.getMessage());
+     }
 }
