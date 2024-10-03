@@ -289,7 +289,7 @@ public class ProductService {
         return new Response("successfully updated category's name");
     
     }
-    //deleteProduct
+    //deleteCategory
     public Response deleteCategory(Integer categoryId) {
         Category category = categoryRepo.findUsingId(categoryId);
         if(category == null)

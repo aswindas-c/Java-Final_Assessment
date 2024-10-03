@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.management.openmbean.KeyAlreadyExistsException;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -38,7 +38,10 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private Map<Integer, Product> productCache; 
+    private Map<Integer, Product> productCache;
+
+    @Mock
+    private Map<Integer, Category> categoryCache; 
 
     @BeforeEach
     void setUp() {
@@ -747,6 +750,252 @@ class ProductServiceTest {
             productService.getProduct(null, null);
         });
         assertEquals("No Products found.", exception.getMessage());
+    }
+
+//CATEGORY
+
+    //add category
+    @Test
+    void testAddCategory_NewCategory() {
+        Category newCategory = new Category();
+        newCategory.setName("NewCategory");
+        newCategory.setId(1);
+
+        when(categoryRepo.findByName(newCategory.getName())).thenReturn(null);
+
+        Response result = productService.addCategory(newCategory);
+        assertEquals("Category added successfully with ID: " + newCategory.getId(), result.getMessage());
+    }
+
+    @Test
+    void testAddCategory_ExistingCategory() {
+        Category existingCategory = new Category();
+        existingCategory.setName("ExistingCategory");
+
+        when(categoryRepo.findByName(existingCategory.getName())).thenReturn(existingCategory);
+
+        Exception exception = assertThrows(KeyAlreadyExistsException.class, () -> {
+            productService.addCategory(existingCategory);
+        });
+        assertEquals("Category name already exists.", exception.getMessage());
+    }
+
+    //Test for get category
+
+    //existing category - by id
+    @Test
+    void testGetCategory_ExistingCategory_ById() {
+        Integer categoryId = 1;
+        Category existingCategory = new Category();
+        existingCategory.setId(categoryId);
+        existingCategory.setName("ExistingCategory");
+
+        when(categoryRepo.findAllUsingId(categoryId)).thenReturn(List.of(existingCategory));
+        when(categoryCache.containsKey(categoryId)).thenReturn(true);
+        when(categoryCache.get(categoryId)).thenReturn(existingCategory);
+
+        List<Category> result = productService.getCategory(categoryId);
+        assertEquals(1, result.size());
+        assertEquals(existingCategory.getName(), result.get(0).getName());
+    }
+
+    @Test
+    void testGetCategory_AllCategories() {
+        List<Category> categories = Arrays.asList(
+            new Category(1, "Category1"),
+            new Category(2, "Category2")
+        );
+
+        when(categoryRepo.findAll()).thenReturn(categories);
+
+        List<Category> result = productService.getCategory(null);
+        assertEquals(2, result.size());
+        assertEquals(categories, result);
+    }
+
+    @Test
+    void testGetCategory_NonExistingCategory_ById() {
+        Integer categoryId = 1;
+
+        when(categoryRepo.findAllUsingId(categoryId)).thenReturn(Collections.emptyList());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.getCategory(categoryId);
+        });
+        assertEquals("No category with that id found", exception.getMessage());
+    }
+
+    @Test
+    void testGetCategory_NoCategoriesExist() {
+        when(categoryRepo.findAll()).thenReturn(Collections.emptyList());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.getCategory(null);
+        });
+        assertEquals("No categories exist.", exception.getMessage());
+    }
+
+    //update category
+
+    @Test
+    void testUpdateCategory_ExistingCategory() {
+        Integer categoryId = 1;
+        String newName = "NewCategoryName";
+
+        Category existingCategory = new Category();
+        existingCategory.setId(categoryId);
+        existingCategory.setName("ExistingCategoryName");
+
+        when(categoryRepo.findUsingId(categoryId)).thenReturn(existingCategory);
+        when(categoryRepo.findByName(newName)).thenReturn(null);
+
+        Response result = productService.updateCategory(categoryId, newName);
+        assertEquals("successfully updated category's name", result.getMessage());
+    }
+
+    @Test
+    void testUpdateCategory_CategoryDoesNotExist() {
+        Integer categoryId = 1;
+        String newName = "NewCategoryName";
+
+        when(categoryRepo.findUsingId(categoryId)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.updateCategory(categoryId, newName);
+        });
+        assertEquals("Cateogry with given id does not exist", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateCategory_CategoryNameAlreadyExists() {
+        Integer categoryId = 1;
+        String existingName = "ExistingCategoryName";
+
+        Category existingCategory = new Category();
+        existingCategory.setId(categoryId);
+        existingCategory.setName("ExistingCategoryName");
+
+        when(categoryRepo.findUsingId(categoryId)).thenReturn(existingCategory);
+        when(categoryRepo.findByName(existingName)).thenReturn(existingCategory);
+
+        Exception exception = assertThrows(KeyAlreadyExistsException.class, () -> {
+            productService.updateCategory(categoryId, existingName);
+        });
+        assertEquals("Category name already exists.", exception.getMessage());
+    }
+
+    //delete category
+
+    @Test
+    void testDeleteCategory_ExistingCategory() {
+        Integer categoryId = 1;
+
+        Category existingCategory = new Category();
+        existingCategory.setId(categoryId);
+        existingCategory.setName("ExistingCategory");
+
+        when(categoryRepo.findUsingId(categoryId)).thenReturn(existingCategory);
+        when(productRepo.findByCategoryId(categoryId)).thenReturn(Collections.emptyList());
+
+        Response result = productService.deleteCategory(categoryId);
+        assertEquals("Successfully deleted cateogry with id " + categoryId, result.getMessage());
+    }
+
+    @Test
+    void testDeleteCategory_CategoryDoesNotExist() {
+        Integer categoryId = 1;
+
+        when(categoryRepo.findUsingId(categoryId)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.deleteCategory(categoryId);
+        });
+        assertEquals("category with id " + categoryId + " doesnt exist!!", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteCategory_CategoryHasProducts() {
+        Integer categoryId = 1;
+
+        Category existingCategory = new Category();
+        existingCategory.setId(categoryId);
+        existingCategory.setName("ExistingCategory");
+
+        Product product = new Product();
+        product.setId(1);
+        product.setCategory(existingCategory);
+
+        when(categoryRepo.findUsingId(categoryId)).thenReturn(existingCategory);
+        when(productRepo.findByCategoryId(categoryId)).thenReturn(List.of(product));
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            productService.deleteCategory(categoryId);
+        });
+        assertEquals("Category cannot be deleted.There are products in that category", exception.getMessage());
+    }
+
+    //sell product
+
+    @Test
+    void testSellProduct_ExistingProduct() {
+        Integer productId = 1;
+        Integer quantity = 2;
+
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setQuantity(10);
+
+        when(productRepo.findUsingId(productId)).thenReturn(existingProduct);
+
+        Response result = productService.sellProduct(productId, quantity);
+        assertEquals(quantity + " products sold. Remaining quantity = " + (existingProduct.getQuantity()), result.getMessage());
+    }
+
+    @Test
+    void testSellProduct_ProductDoesNotExist() {
+        Integer productId = 1;
+        Integer quantity = 2;
+
+        when(productRepo.findUsingId(productId)).thenReturn(null);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.sellProduct(productId, quantity);
+        });
+        assertEquals("Product with given id does not exist", exception.getMessage());
+    }
+
+    @Test
+    void testSellProduct_InvalidQuantity() {
+        Integer productId = 1;
+        Integer quantity = -1;
+
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setQuantity(10);
+
+        when(productRepo.findUsingId(productId)).thenReturn(existingProduct);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            productService.sellProduct(productId, quantity);
+        });
+        assertEquals("Enter valid quantity", exception.getMessage());
+    }
+
+    @Test
+    void testSellProduct_InsufficientQuantity() {
+        Integer productId = 1;
+        Integer quantity = 11;
+
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setQuantity(10);
+
+        when(productRepo.findUsingId(productId)).thenReturn(existingProduct);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            productService.sellProduct(productId, quantity);
+        });
+        assertEquals("Required quantity not available.Available quantity = " + existingProduct.getQuantity(),exception.getMessage());
     }
 
 }
