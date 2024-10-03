@@ -2,16 +2,23 @@ package com.example.Inventory_Management;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.management.openmbean.KeyAlreadyExistsException;
+
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.example.Inventory_Management.DTO.ProductDto;
+import com.example.Inventory_Management.DTO.ProductResponseDto;
 import com.example.Inventory_Management.DTO.Response;
 import com.example.Inventory_Management.model.Category;
 import com.example.Inventory_Management.model.Product;
@@ -635,4 +642,111 @@ class ProductServiceTest {
         });
         assertEquals("Category Id does not exists.", exception.getMessage());
     }
+
+    
+    //Test for getProduct method
+
+    //existing product - by id
+    @Test
+    void testGetProduct_ExistingProduct_ById() {
+        Integer productId = 1;
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setName("ExistingProduct");
+        existingProduct.setCategory(new Category(1, "ExistingCategory"));
+
+        when(productRepo.findAllUsingId(productId)).thenReturn(List.of(existingProduct));
+        when(productCache.containsKey(productId)).thenReturn(true);
+        when(productCache.get(productId)).thenReturn(existingProduct);
+
+        List<ProductResponseDto> result = productService.getProduct(productId, null);
+        assertEquals(1, result.size());
+        assertEquals(existingProduct.getName(), result.get(0).getName());
+    }
+
+     //existing product - by category id
+    @Test
+    void testGetProduct_ExistingProduct_ByCategoryId() {
+        Integer categoryId = 1;
+        Product existingProduct = new Product();
+        existingProduct.setId(1);
+        existingProduct.setName("ExistingProduct");
+        existingProduct.setCategory(new Category(categoryId, "ExistingCategory"));
+
+        when(productRepo.findByCategoryId(categoryId)).thenReturn(List.of(existingProduct));
+
+        List<ProductResponseDto> result = productService.getProduct(null, categoryId);
+        assertEquals(1, result.size());
+        assertEquals(existingProduct.getName(), result.get(0).getName());
+    }
+
+     //existing product - by both
+    @Test
+    void testGetProduct_ExistingProduct_ByBoth() {
+        Integer productId = 1;
+        Integer categoryId = 1;
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setName("ExistingProduct");
+        existingProduct.setCategory(new Category(categoryId, "ExistingCategory"));
+
+        when(productRepo.findByCategoryIdandId(productId, categoryId)).thenReturn(List.of(existingProduct));
+
+        List<ProductResponseDto> result = productService.getProduct(productId, categoryId);
+        assertEquals(1, result.size());
+        assertEquals(existingProduct.getName(), result.get(0).getName());
+    }
+
+     //non-existing product - by id
+    @Test
+    void testGetProduct_NonExistingProduct_ById() {
+        Integer productId = 1;
+
+        when(productRepo.findAllUsingId(productId)).thenReturn(Collections.emptyList());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.getProduct(productId, null);
+        });
+        assertEquals("No Product exists with that product id.", exception.getMessage());
+    }
+
+     //non-existing product - by category id
+    @Test
+    void testGetProduct_NonExistingProduct_ByCategoryId() {
+        Integer categoryId = 1;
+
+        when(productRepo.findByCategoryId(categoryId)).thenReturn(Collections.emptyList());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.getProduct(null, categoryId);
+        });
+        assertEquals("No Product exists under that category id.", exception.getMessage());
+    }
+
+    //non-existing product - by both
+    @Test
+    void testGetProduct_NonExistingProduct_ByBoth() {
+        Integer productId = 1;
+        Integer categoryId = 1;
+
+        List<Product> products = new ArrayList<>();
+        when(productRepo.findByCategoryIdandId(productId, categoryId)).thenReturn(products);
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.getProduct(productId, categoryId);
+        });
+        assertEquals("No Product exists under that category id and product id", exception.getMessage());
+    }
+
+    //no fields given - no products found
+    @Test
+    void testGetProduct_NoProductsFound() {
+        when(productRepo.findAll()).thenReturn(Collections.emptyList());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            productService.getProduct(null, null);
+        });
+        assertEquals("No Products found.", exception.getMessage());
+    }
+
 }
