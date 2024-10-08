@@ -85,6 +85,8 @@ public class EmployeeServiceTest {
         employee.setAccountName("SmartOps");
         employee.setDesignation("Asiate");
         employee.setStream("SmartOps-Sales");
+        employee.setName("Arjun");
+        employee.setManagerId(3);
 
        
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -99,9 +101,12 @@ public class EmployeeServiceTest {
     void testAddEmployee_ValidationErrorMismatch() {
         
         Employee employee = new Employee();
+        employee.setName("Amal");
+        employee.setManagerId(2);
         employee.setAccountName("Walmart");
         employee.setDesignation("Associate");
         employee.setStream("SmartOps-Sales");
+
 
         Stream stream = new Stream();
         stream.setName("SmartOps-Sales");
@@ -127,9 +132,11 @@ public class EmployeeServiceTest {
         
         Employee employee = new Employee();
         employee.setId(2);
+        employee.setName("Amal");
         employee.setAccountName("SmartOps");
         employee.setDesignation("Associate");
         employee.setStream("SmartOps-Sales");
+        employee.setManagerId(2);
 
         Stream stream = new Stream();
         stream.setName("SmartOps-Sales");
@@ -155,11 +162,13 @@ public class EmployeeServiceTest {
     void testAddEmployee_ManagerIdNotZero() {
         
         Employee employee = new Employee();
+        employee.setName("Aswin");
         employee.setId(2);
         employee.setAccountName("SmartOps");
         employee.setDesignation("Manager");
         employee.setStream("SmartOps-Sales");
         employee.setManagerId(3);
+
 
         Stream stream = new Stream();
         stream.setName("SmartOps-Sales");
@@ -185,6 +194,7 @@ public class EmployeeServiceTest {
     void testAddEmployee_ManagerExistInStream() {
         
         Employee employee = new Employee();
+        employee.setName("Aswin");
         employee.setId(2);
         employee.setAccountName("SmartOps");
         employee.setDesignation("Manager");
