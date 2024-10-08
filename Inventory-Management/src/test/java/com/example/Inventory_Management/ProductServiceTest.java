@@ -118,6 +118,9 @@ class ProductServiceTest {
     void testAddProduct_StockLevelNegative() {
         ProductDto productDto = new ProductDto();
         productDto.setQuantity(-1);
+        productDto.setName("Pen");
+        productDto.setCategoryId(3);
+        productDto.setPrice(100.00);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             productService.addProduct(productDto);
@@ -132,6 +135,9 @@ class ProductServiceTest {
         ProductDto productDto = new ProductDto();
         productDto.setQuantity(200);
         productDto.setPrice((double)-1);
+        productDto.setName("Pen");
+        productDto.setCategoryId(3);
+
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             productService.addProduct(productDto);

@@ -35,6 +35,10 @@ public class ProductService {
 
     public Response addProduct(ProductDto productDto) {
 
+        if(productDto.getCategoryId() == null || productDto.getName() == null || productDto.getPrice() == null || productDto.getQuantity() == null )
+        {
+            throw new IllegalArgumentException("Product name,categoryid,price,quantity required");
+        }
         //Stock levels and price cannot be negative.
         if(productDto.getQuantity()<0){
             throw new IllegalArgumentException("Stock levels cannot be negative.");
@@ -200,7 +204,10 @@ public class ProductService {
                 Product cachedProduct = productCache.get(productId);                
                     products =  List.of(cachedProduct); 
             }
-            products = productRepo.findAllUsingId(productId);
+            else
+            {
+                products = productRepo.findAllUsingId(productId);
+            }
             if(products.isEmpty())
             {
                 throw new NoSuchElementException("No Product exists with that product id.");
@@ -236,6 +243,11 @@ public class ProductService {
 
     //add category
     public Response addCategory(Category category) {
+
+        if(category.getName() == null)
+        {
+            throw new IllegalArgumentException("Enter Category name");
+        }
 
         //Check if the category name already exists (it should be unique)
         if (categoryRepo.findByName(category.getName()) != null) {
