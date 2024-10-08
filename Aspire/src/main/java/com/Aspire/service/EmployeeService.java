@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
@@ -27,6 +28,11 @@ public class EmployeeService {
     private AccountRepository accountRepo;
  
     public Response addEmployee(Employee employee) {
+
+        if(employee.getName() == null || employee.getDesignation() == null || employee.getAccountName() == null || employee.getManagerId() == null || employee.getStream() == null)
+        {
+            throw new IllegalArgumentException("Name,designation,stream,account,managerId Required");
+        }
  
         String stream = employee.getStream();
         String designation = employee.getDesignation();
