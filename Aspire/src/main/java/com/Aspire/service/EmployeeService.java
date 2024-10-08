@@ -3,10 +3,13 @@ package com.Aspire.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import javax.management.openmbean.KeyAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.Aspire.DTO.EmployeeResponseDto;
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
@@ -132,7 +135,8 @@ public class EmployeeService {
         }
     }
     // Get employee starting with specific character
-    public List<Employee> getEmployee(String startsWith) {
+    public List<EmployeeResponseDto> getEmployee(String startsWith) {
+        List<Employee> employees;
         if (startsWith == null || startsWith.isEmpty()) {
             if(employeeRepo.findAll().isEmpty())
             {
@@ -140,7 +144,7 @@ public class EmployeeService {
             }
             else
             {
-                return employeeRepo.findAll();
+                employees = employeeRepo.findAll();
             }
         } else
         {
@@ -150,9 +154,10 @@ public class EmployeeService {
             }
             else
             {
-                return employeeRepo.findByNameStartsWith(startsWith);
+                employees = employeeRepo.findByNameStartsWith(startsWith);
             }
         }
+        return employees.stream().map(employee -> new EmployeeResponseDto(employee)).collect(Collectors.toList());
     }
  
     //Get all streams

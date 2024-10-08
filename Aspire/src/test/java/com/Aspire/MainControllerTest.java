@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.hamcrest.Matchers.hasSize;
 
+import com.Aspire.DTO.EmployeeResponseDto;
 import com.Aspire.DTO.Response;
 import com.Aspire.controller.MainController;
 import com.Aspire.model.Employee;
@@ -63,11 +64,9 @@ class MainControllerTest {
     //Get employee starting with
     @Test
     void testGet_Employee_Startingwith() {
-        Employee employee1 = new Employee();
-        employee1.setName("Aswin");
-        Employee employee2 = new Employee();
-        employee2.setName("Amal");
-        List<Employee> employeeList = Arrays.asList(employee1,employee2);
+        EmployeeResponseDto employee1 = new EmployeeResponseDto(1, "Aswin", "Associate", 2, "SmartOps-Sales", "SmartOps");
+        EmployeeResponseDto employee2 = new EmployeeResponseDto(3, "Amal", "Associate", 2, "SmartOps-Sales", "SmartOps");
+        List<EmployeeResponseDto> employeeList = Arrays.asList(employee1,employee2);
         when(employeeService.getEmployee("A")).thenReturn(employeeList);
 
         try {

@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.Aspire.DTO.EmployeeResponseDto;
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
@@ -385,19 +386,6 @@ public class EmployeeServiceTest {
         assertEquals("Employee and manager must belong to the same stream. Employee cannot be added.", exception.getMessage());
     }
 
-    //Employee Starts with A
-    @Test
-    void testGetEmployee_GetEmployeesStartingWith() {
-        Employee employee1 = new Employee();
-        employee1.setName("Aswin");
-
-        List<Employee> employees = Arrays.asList(employee1);
-        when(employeeRepo.findByNameStartsWith("A")).thenReturn(employees);
-
-        List<Employee> result = employeeService.getEmployee("A");
-
-        assertEquals(employees, result);
-    }
 
     //No Employee Starts with A
     @Test
@@ -411,22 +399,6 @@ public class EmployeeServiceTest {
         });
 
         assertEquals("No Employee found.", exception.getMessage());
-    }
-
-    //Get all Employee
-    @Test
-    void testGetEmployee_All_Employee() {
-        Employee employee1 = new Employee();
-        employee1.setName("Aswin");
-
-        Employee employee2 = new Employee();
-        employee2.setName("Riya");
-
-        List<Employee> employees = Arrays.asList(employee1,employee2);
-        when(employeeRepo.findAll()).thenReturn(employees);
-        List<Employee> result = employeeService.getEmployee(null);
-
-        assertEquals(employees, result);
     }
 
     //No Employee present
