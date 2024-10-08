@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Aspire.DTO.EmployeeResponseDto;
 import com.Aspire.DTO.Response;
 import com.Aspire.model.Employee;
 import com.Aspire.service.EmployeeService;
@@ -37,7 +38,7 @@ public class MainController {
     //Return employees starting with given character
     @GetMapping()
     public Map<String, Object> getEmployee(@RequestParam(required = false) String startsWith) {
-        List<Employee> employees = employeeService.getEmployee(startsWith);
+        List<EmployeeResponseDto> employees = employeeService.getEmployee(startsWith);
         
         Map<String, Object> response = new HashMap<>();
         response.put("Employees", employees);
