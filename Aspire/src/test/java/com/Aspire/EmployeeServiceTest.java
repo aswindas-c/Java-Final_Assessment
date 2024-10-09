@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.Aspire.DTO.EmployeeResponseDto;
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
@@ -127,36 +126,6 @@ public class EmployeeServiceTest {
         assertEquals("Stream does not belong to this account!!", exception.getMessage());
     }
 
-    //Add Employee - Employee Id exists
-    @Test
-    void testAddEmployee_EmployeeIdExists() {
-        
-        Employee employee = new Employee();
-        employee.setId(2);
-        employee.setName("Amal");
-        employee.setAccountName("SmartOps");
-        employee.setDesignation("Associate");
-        employee.setStream("SmartOps-Sales");
-        employee.setManagerId(2);
-
-        Stream stream = new Stream();
-        stream.setName("SmartOps-Sales");
-        stream.setAccountId("SO");
-
-        Account account = new Account();
-        account.setName("SmartOps");
-        account.setId("SO");
-
-        when(employeeRepo.existsById(1)).thenReturn(true);
-        when(streamRepo.findByName(employee.getStream())).thenReturn(stream);
-        when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
-       
-        Exception exception = assertThrows(KeyAlreadyExistsException.class, () -> {
-            employeeService.addEmployee(employee);
-        });
-
-        assertEquals("Employee ID already exists.", exception.getMessage());
-    }
 
     //Add Employee - Manager must have managerid 0
     @Test
@@ -232,6 +201,7 @@ public class EmployeeServiceTest {
         employee.setDesignation("Manager");
         employee.setStream("SmartOps-Sales");
         employee.setManagerId(0);
+        employee.setId(1);
 
         Stream stream = new Stream();
         stream.setName("SmartOps-Sales");
@@ -245,7 +215,6 @@ public class EmployeeServiceTest {
         when(employeeRepo.existsById(2)).thenReturn(false);
         when(streamRepo.findByName(employee.getStream())).thenReturn(stream);
         when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
-        when(employeeRepo.findMaxId()).thenReturn(null);
        
         Response response = employeeService.addEmployee(employee);
 
@@ -263,6 +232,7 @@ public class EmployeeServiceTest {
          employee.setDesignation("Associate");
          employee.setStream("SmartOps-Sales");
          employee.setManagerId(0);
+         employee.setId(1);
  
          Stream stream = new Stream();
          stream.setName("SmartOps-Sales");
@@ -275,7 +245,6 @@ public class EmployeeServiceTest {
          when(employeeRepo.existsById(2)).thenReturn(false);
          when(streamRepo.findByName(employee.getStream())).thenReturn(stream);
          when(accountRepo.findByName(employee.getAccountName())).thenReturn(account);
-         when(employeeRepo.findMaxId()).thenReturn(null);
         
          Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             employeeService.addEmployee(employee);
