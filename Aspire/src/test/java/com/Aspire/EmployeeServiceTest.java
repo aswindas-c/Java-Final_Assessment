@@ -250,7 +250,7 @@ public class EmployeeServiceTest {
             employeeService.addEmployee(employee);
         });
 
-        assertEquals("Manager ID 0 should have designation as Manager. Employee cannot be added.", exception.getMessage());
+        assertEquals("Employee with Manager ID 0 should have designation as Manager. Employee cannot be added.", exception.getMessage());
     }
 
     //Manager Not Found
@@ -867,7 +867,7 @@ public class EmployeeServiceTest {
             employeeService.changeAccount(3,"SmartOps","SmartOps-Sales");
         });
 
-        assertEquals("Cannot change account Employee is a manager", exception.getMessage());
+        assertEquals("Cannot change account, Employee is a manager", exception.getMessage());
     }
 
     //Change Account - Success
