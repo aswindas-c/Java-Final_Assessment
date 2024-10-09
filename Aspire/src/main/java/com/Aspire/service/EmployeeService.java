@@ -44,13 +44,13 @@ public class EmployeeService {
         // Validate employee data
         validateEmployeeData(stream, designation, accountName);
  
-        // Handle special case for Account Manager
+        // Handle special case for Account Manager(check if managerId = 0)
         if ("Manager".equalsIgnoreCase(employee.getDesignation())) {
             if (employee.getManagerId() != 0) {
                 throw new IllegalArgumentException("Manager must have Manager ID set to 0. Employee cannot be added.");
             }
  
-            //Update Manager id to stream collection and also check manager already exist for the stream
+            //Update Manager id in the stream table and also check manager already exist for that stream
             Stream str = streamRepo.findByName(stream);
             if(str.getManagerId() != 0){
                 throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
@@ -71,16 +71,20 @@ public class EmployeeService {
         } else {
             // Handle non-Account Manager
             if (employee.getManagerId() == 0) {
-                throw new IllegalArgumentException("Manager ID 0 should have designation as Manager. Employee cannot be added.");
+                throw new IllegalArgumentException("Employee with Manager ID 0 should have designation as Manager. Employee cannot be added.");
             }
         }
  
         // Handle normal employee
+        
         Employee manager = employeeRepo.findUsingId(employee.getManagerId());
+
+        //check whether a manger with given managerId exist
         if (manager == null) {
             throw new NoSuchElementException("Manager with ID " + employee.getManagerId() + " not found. Employee cannot be added.");
         }
- 
+        
+        //check if the employee with the given managerId is actually a manager
         if (manager.getManagerId() != 0) {
             throw new NoSuchElementException("Employee with ID " + employee.getManagerId() + " is not a manager. Employee cannot be added.");
         }
@@ -137,16 +141,16 @@ public class EmployeeService {
                 employees = employeeRepo.findAll();
             }
         } else
-        {
-            if(employeeRepo.findByNameStartsWith(startsWith).isEmpty())
             {
-                throw new NoSuchElementException("No Employee found.");
+                if(employeeRepo.findByNameStartsWith(startsWith).isEmpty())
+                {
+                    throw new NoSuchElementException("No Employee found.");
+                }
+                else
+                {
+                    employees = employeeRepo.findByNameStartsWith(startsWith);
+                }
             }
-            else
-            {
-                employees = employeeRepo.findByNameStartsWith(startsWith);
-            }
-        }
         return employees.stream().map(employee -> new EmployeeResponseDto(employee)).collect(Collectors.toList());
     }
  
@@ -173,13 +177,14 @@ public class EmployeeService {
         if (employee == null) {
             throw new NoSuchElementException("Employee with ID " + employeeId + " not found.");
         }
-   
+        
+        //check if the employee is a manager and has subordinates
         List<Employee> subordinates = employeeRepo.findByManagerId(employeeId);
         if (!subordinates.isEmpty()) {
             throw new IllegalStateException("Cannot delete Employee with ID " + employeeId + " as they are a manager with subordinates.");
         }
    
-        // Delete the employee
+        // Updating the stream table by setting the manager id of the particular stream to 0
         if(employee.getManagerId() == 0)
         {
             Stream stream = streamRepo.findByName(employee.getStream());
