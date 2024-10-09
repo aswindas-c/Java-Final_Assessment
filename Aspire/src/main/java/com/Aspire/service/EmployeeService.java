@@ -57,16 +57,13 @@ public class EmployeeService {
                 
             }
             else{
+
                 //save to employee collection
-            employeeRepo.save(employee);
+                employeeRepo.save(employee);
                 str.setManagerId(employee.getId());
                 streamRepo.save(str);
             }
  
- 
-            
- 
-
             return new Response("Employee added as Manager successfully with ID: " + employee.getId());
         } else {
             // Handle non-Account Manager
@@ -216,7 +213,8 @@ public class EmployeeService {
         if (newManager == null || newManager.getManagerId()!=0) {
             throw new NoSuchElementException("New manager with ID " + newManagerId + " not found.");
         }
-   
+        
+        //setting the stream and account of the employee to new manager's stream and account
         if (!employee.getStream().equalsIgnoreCase(newManager.getStream())) {
             employee.setStream(newManager.getStream());
             employee.setAccountName(newManager.getAccountName());
@@ -306,8 +304,9 @@ public class EmployeeService {
         else if (str.getManagerId() == 0) {
             throw new KeyAlreadyExistsException("No manager found for stream : " + str.getName());
         }
+        //check whether the employee is a manager
         else if(employee.getManagerId() == 0){
-            throw new IllegalStateException("Cannot change account Employee is a manager");
+            throw new IllegalStateException("Cannot change account, Employee is a manager");
         }
         else{
             employee.setAccountName(acnt.getName());
