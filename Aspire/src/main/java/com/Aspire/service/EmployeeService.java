@@ -169,10 +169,6 @@ public class EmployeeService {
  
     //Delete a employee
     public Response deleteEmployee(Integer employeeId) {
-        if(employeeId == null)
-        {
-            throw new IllegalArgumentException("Enter valid Employee Id");
-        }
         // Check if the employee exists
         Employee employee = employeeRepo.findUsingId(employeeId);
         if (employee == null) {
@@ -198,10 +194,6 @@ public class EmployeeService {
  
     //Change Employee's Manager
     public Response changeManager(Integer employeeId, Integer newManagerId) {
-        if(employeeId == null || newManagerId == null)
-        {
-            throw new IllegalArgumentException("Enter valid Employee Id");
-        }
         // Fetch the employee
         Employee employee = employeeRepo.findUsingId(employeeId);
         if (employee == null) {
@@ -243,10 +235,6 @@ public class EmployeeService {
  
     //Change Employee Designation
     public Response changeDesignation(Integer employeeId, String streamname) {
-        if(employeeId == null || streamname == null)
-        {
-            throw new IllegalArgumentException("Enter valid Employee Id");
-        }
 
         // Fetch the employee
         Employee employee = employeeRepo.findUsingId(employeeId);
@@ -290,10 +278,6 @@ public class EmployeeService {
     //Change Employee Account
     public Response changeAccount(Integer employeeId, String account,String streamName) {
 
-        if(employeeId == null || account == null || streamName == null)
-        {
-            throw new IllegalArgumentException("Enter valid Employee Id");
-        }
         // Fetch the employee
         Employee employee = employeeRepo.findUsingId(employeeId);
         Stream str = streamRepo.findByName(streamName);
