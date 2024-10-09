@@ -128,7 +128,7 @@ public class EmployeeService {
     // Get employee starting with specific character
     public List<EmployeeResponseDto> getEmployee(String startsWith) {
         List<Employee> employees;
-        if (startsWith == null || startsWith.isEmpty()) {
+        if (startsWith == null) {
             if(employeeRepo.findAll().isEmpty())
             {
                 throw new NoSuchElementException("No Employee found.");
