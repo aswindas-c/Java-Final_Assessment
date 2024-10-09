@@ -167,7 +167,7 @@ public class ProductService {
     public List<ProductResponseDto> getProduct(Integer productId, Integer categoryId) {
         List<Product> products;
         if (productId != null && categoryId != null) {
-            if(productCache.containsKey(productId)) 
+            if(productCache.containsKey(productId) && productCache.get(productId).getCategory().getId() == categoryId) 
             {        
                 Product cachedProduct = productCache.get(productId);                
                     products = List.of(cachedProduct); 
@@ -292,7 +292,7 @@ public class ProductService {
 
         Category category = categoryRepo.findUsingId(categoryId);
         if(category == null){
-            throw new NoSuchElementException("Cateogry with given id does not exist");
+            throw new NoSuchElementException("Category with given id does not exist");
         }
 
         if (categoryRepo.findByName(name) != null) {
@@ -319,7 +319,7 @@ public class ProductService {
         }
         categoryRepo.delete(category);
         categoryCache.remove(categoryId);
-        return new Response("Successfully deleted cateogry with id " + categoryId);
+        return new Response("Successfully deleted Category with id " + categoryId);
     }
 
     //Sell a product
