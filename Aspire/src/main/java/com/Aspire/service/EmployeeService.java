@@ -52,17 +52,19 @@ public class EmployeeService {
  
             //Update Manager id to stream collection and also check manager already exist for the stream
             Stream str = streamRepo.findByName(stream);
-            if(str.getManagerId() == 0){
+            if(str.getManagerId() != 0){
+                throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
+                
+            }
+            else{
+                //save to employee collection
+            employeeRepo.save(employee);
                 str.setManagerId(employee.getId());
                 streamRepo.save(str);
             }
-            else{
-                throw new KeyAlreadyExistsException("A manager already exists in the stream: " + employee.getStream());
-            }
  
  
-            //save to employee collection
-            employeeRepo.save(employee);
+            
  
 
             return new Response("Employee added as Manager successfully with ID: " + employee.getId());
