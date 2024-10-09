@@ -199,3 +199,13 @@ After Hash Map
 2024-10-09 09:35:01 [http-nio-8080-exec-4] INFO  MainController:174 - Restock-Product Query executed in 11ms
 2024-10-09 09:35:13 [http-nio-8080-exec-6] INFO  MainController:82 - Delete-Product Query executed in 26ms
 2024-10-09 09:36:03 [http-nio-8080-exec-1] INFO  MainController:148 - Delete-Category Query executed in 18ms
+2024-10-09 11:07:31 [main] INFO  MainController:148 - Delete-Category Query executed in 7ms
+2024-10-09 11:07:31 [main] INFO  MainController:108 - Add-Category Query executed in 0ms
+2024-10-09 11:07:31 [main] INFO  MainController:122 - Get-Category Query executed in 0ms
+2024-10-09 11:07:31 [main] INFO  MainController:97 - Update-Product Query executed in 0ms
+2024-10-09 11:07:31 [main] INFO  MainController:174 - Restock-Product Query executed in 1ms
+2024-10-09 11:07:31 [main] INFO  MainController:161 - Sell-Product Query executed in 1ms
+2024-10-09 11:07:31 [main] INFO  MainController:82 - Delete-Product Query executed in 0ms
+2024-10-09 11:07:31 [main] INFO  MainController:66 - Get-Product Query executed in 0ms
+2024-10-09 11:07:31 [main] INFO  MainController:136 - Update-Category Query executed in 0ms
+2024-10-09 11:07:31 [main] INFO  MainController:49 - Add-Product Query executed in 0ms

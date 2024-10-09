@@ -917,7 +917,7 @@ class ProductServiceTest {
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             productService.updateCategory(categoryId, newName);
         });
-        assertEquals("Cateogry with given id does not exist", exception.getMessage());
+        assertEquals("Category with given id does not exist", exception.getMessage());
     }
 
     @Test
@@ -952,7 +952,7 @@ class ProductServiceTest {
         when(productRepo.findByCategoryId(categoryId)).thenReturn(Collections.emptyList());
 
         Response result = productService.deleteCategory(categoryId);
-        assertEquals("Successfully deleted cateogry with id " + categoryId, result.getMessage());
+        assertEquals("Successfully deleted Category with id " + categoryId, result.getMessage());
     }
 
     @Test
