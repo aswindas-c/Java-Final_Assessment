@@ -44,18 +44,6 @@ public class EmployeeService {
         // Validate employee data
         validateEmployeeData(stream, designation, accountName);
  
-        Integer maxId = employeeRepo.findMaxId();
-        if(maxId != null) {
-            employee.setId(maxId + 1);
-        } else {
-            employee.setId(1);
-        }
-       
-        // Check if employee with the same ID already exists
-        if (employeeRepo.existsById(employee.getId())) {
-            throw new KeyAlreadyExistsException("Employee ID already exists.");
-        }
- 
         // Handle special case for Account Manager
         if ("Manager".equalsIgnoreCase(employee.getDesignation())) {
             if (employee.getManagerId() != 0) {

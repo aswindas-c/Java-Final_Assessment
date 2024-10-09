@@ -10,10 +10,9 @@ import com.Aspire.model.Employee;
 
 
 public interface EmployeeRepository extends JpaRepository<Employee,Integer>{
+    
     List<Employee> findByStream(String stream);
 
-    @Query("SELECT COALESCE(MAX(e.id), 0) FROM Employee e")
-    Integer findMaxId();
     boolean existsById(Integer id);
     
     @Query("SELECT e FROM Employee e WHERE e.id = :id")
