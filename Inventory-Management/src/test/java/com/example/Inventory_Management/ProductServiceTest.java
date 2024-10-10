@@ -48,6 +48,18 @@ class ProductServiceTest {
         MockitoAnnotations.openMocks(this); // Initialize mocks
     }
 
+    //add product failure without body
+    @Test
+    void testAddProduct_No_RequestBody() {
+        ProductDto productDto = new ProductDto();
+        
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            productService.addProduct(productDto);
+        });
+
+        assertEquals("Product name,categoryid,price,quantity required", exception.getMessage());
+    }
+
     //add product success
     @Test
     void testAddProduct_Success() {
@@ -792,6 +804,17 @@ class ProductServiceTest {
     }
 
 //CATEGORY
+
+    //add category without body
+    @Test
+    void testAddCategory_Failure_No_RequestBody() {
+        Category newCategory = new Category();
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            productService.addCategory(newCategory);
+        });
+        assertEquals("Enter Category name", exception.getMessage());
+    }
 
     //add category
     @Test
