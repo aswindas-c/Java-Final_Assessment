@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.Aspire.DTO.EmployeeResponseDto;
 import com.Aspire.DTO.Response;
 import com.Aspire.Respository.AccountRepository;
 import com.Aspire.Respository.EmployeeRepository;
@@ -40,6 +41,18 @@ public class EmployeeServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this); 
+    }
+
+    //Add Employee Fails - No request Body
+    @Test
+    void testAddEmployee_No_RequestBody() {
+        Employee employee = new Employee();
+        
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            employeeService.addEmployee(employee);
+        });
+
+        assertEquals("Name,designation,stream,account,managerId Required", exception.getMessage());
     }
 
     //Add Employee Successfully
@@ -355,6 +368,39 @@ public class EmployeeServiceTest {
         assertEquals("Employee and manager must belong to the same stream. Employee cannot be added.", exception.getMessage());
     }
 
+    //Get all employee
+    @Test
+    void testGetEmployee_AllEmployee() {
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setAccountName("SmartOps");
+        employee.setDesignation("Associate");
+        employee.setStream("SmartOps-Sales");
+        employee.setManagerId(2);
+        List<Employee> employees = Arrays.asList(employee);
+        when(employeeRepo.findAll()).thenReturn(employees);
+
+        List<EmployeeResponseDto> result = employeeService.getEmployee(null);
+        assertEquals(1, result.size());
+        assertEquals(employee.getName(), result.get(0).getName());
+    }
+
+    //Get all employee start with A
+    @Test
+    void testGetEmployee_Startswith() {
+        Employee employee = new Employee();
+        employee.setName("Aswin");
+        employee.setAccountName("SmartOps");
+        employee.setDesignation("Associate");
+        employee.setStream("SmartOps-Sales");
+        employee.setManagerId(2);
+        List<Employee> employees = Arrays.asList(employee);
+        when(employeeRepo.findByNameStartsWith("A")).thenReturn(employees);
+
+        List<EmployeeResponseDto> result = employeeService.getEmployee("A");
+        assertEquals(1, result.size());
+        assertEquals(employee.getName(), result.get(0).getName());
+    }
 
     //No Employee Starts with A
     @Test

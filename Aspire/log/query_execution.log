@@ -26,3 +26,23 @@
 2024-10-09 12:42:17 [http-nio-8080-exec-4] INFO  MainController:62 - Get-Employee Query executed in 16ms
 2024-10-09 14:31:06 [http-nio-8080-exec-10] INFO  MainController:62 - Get-Employee Query executed in 34ms
 2024-10-09 14:33:25 [http-nio-8080-exec-2] INFO  MainController:62 - Get-Employee Query executed in 86ms
+2024-10-10 10:10:38 [main] INFO  MainController:62 - Get-Employee Query executed in 0ms
+2024-10-10 10:10:38 [main] INFO  MainController:79 - Get-Streams Query executed in 0ms
+2024-10-10 10:10:38 [main] INFO  MainController:111 - Change-Manager Query executed in 0ms
+2024-10-10 10:10:38 [main] INFO  MainController:128 - Change-Designation Query executed in 0ms
+2024-10-10 10:10:38 [main] INFO  MainController:146 - Change-Account Query executed in 0ms
+2024-10-10 10:10:39 [main] INFO  MainController:44 - Add-Employee Query executed in 0ms
+2024-10-10 10:54:49 [main] INFO  MainController:62 - Get-Employee Query executed in 0ms
+2024-10-10 10:54:50 [main] INFO  MainController:79 - Get-Streams Query executed in 0ms
+2024-10-10 10:54:50 [main] INFO  MainController:111 - Change-Manager Query executed in 0ms
+2024-10-10 10:54:50 [main] INFO  MainController:128 - Change-Designation Query executed in 0ms
+2024-10-10 10:54:50 [main] INFO  MainController:146 - Change-Account Query executed in 0ms
+2024-10-10 10:54:50 [main] INFO  MainController:44 - Add-Employee Query executed in 0ms
+2024-10-10 10:57:46 [main] INFO  MainController:94 - Delete - Employee Query executed in 4ms
+2024-10-10 10:58:11 [main] INFO  MainController:62 - Get-Employee Query executed in 0ms
+2024-10-10 10:58:12 [main] INFO  MainController:79 - Get-Streams Query executed in 0ms
+2024-10-10 10:58:12 [main] INFO  MainController:111 - Change-Manager Query executed in 0ms
+2024-10-10 10:58:12 [main] INFO  MainController:94 - Delete - Employee Query executed in 0ms
+2024-10-10 10:58:12 [main] INFO  MainController:128 - Change-Designation Query executed in 0ms
+2024-10-10 10:58:12 [main] INFO  MainController:146 - Change-Account Query executed in 0ms
+2024-10-10 10:58:12 [main] INFO  MainController:44 - Add-Employee Query executed in 0ms

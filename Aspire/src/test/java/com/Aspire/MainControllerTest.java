@@ -147,4 +147,20 @@ class MainControllerTest {
             System.out.println(ex.getMessage());
         }
     }
+
+    //Delete Employee
+    @Test
+    void testDelete_Employee() {
+        when(employeeService.deleteEmployee(2)).thenReturn(new Response("Successfully deleted employee with id 2"));
+        try {
+            mvc.perform(MockMvcRequestBuilders.delete("/api/employee/delete")
+                    .param("employeeId", "2")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message", equalTo("Successfully deleted employee with id 2")));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+    
 }
