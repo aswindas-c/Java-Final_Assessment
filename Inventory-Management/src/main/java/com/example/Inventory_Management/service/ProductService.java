@@ -49,14 +49,18 @@ public class ProductService {
 
         Product product = new Product();
         product.setName(productDto.getName());
+
         product.setCategory(categoryRepo.findById(productDto.getCategoryId())
         .orElseThrow(() -> new RuntimeException("Category does not exist")));
         product.setPrice(productDto.getPrice());
         product.setQuantity(productDto.getQuantity());
+
+
         // Check if the product name already exists (it should be unique)
         if (productRepo.findByName(product.getName()) != null) {
             throw new KeyAlreadyExistsException("Product name already exists.");
         }
+
         productRepo.save(product);
         productCache.put(product.getId(), product);
         return new Response("Product added successfully with ID: " + product.getId());
